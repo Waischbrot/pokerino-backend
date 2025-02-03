@@ -25,3 +25,5 @@ public void test() {
     this.deckRankingUseCase.evaluateHand(hand);
 }
 ```
+
+[Click to view source](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java)
