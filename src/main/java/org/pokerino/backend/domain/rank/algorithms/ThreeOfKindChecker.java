@@ -1,7 +1,6 @@
 package org.pokerino.backend.domain.rank.algorithms;
 
 public final class ThreeOfKindChecker {
-
     /**
      * Receives a deck of cards and checks if there is a three of a kind.
      * Input array always contains 7 cards.
