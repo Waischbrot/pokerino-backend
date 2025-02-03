@@ -4,6 +4,15 @@ public final class RoyalFlushChecker {
     private static final char[] SUITS = { 's', 'c', 'h', 'd' };
     private static final char[] ROYAL_FLUSH_CARDS = { 'T', 'J', 'Q', 'K', 'A' };
 
+    /**
+     * Receives a deck of cards and checks if there is a royal flush.
+     * Input array always contains 7 cards.
+     * Example: { "6h", "2h", "3h", "4h", "5h", "9h", "7h" }
+     * A royal flush consists of the following cards: "T", "J", "Q", "K", "A" of the same suit.
+     *
+     * @param deck The deck of cards to evaluate.
+     * @return true if found, false otherwise.
+     */
     public static boolean checkForRoyalFlush(final String[] deck) {
         for (final char suit: SUITS) {
             boolean success = true;
