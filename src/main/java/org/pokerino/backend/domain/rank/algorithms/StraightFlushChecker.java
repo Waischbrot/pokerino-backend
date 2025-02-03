@@ -12,7 +12,7 @@ public final class StraightFlushChecker {
      * A straight flush is a combination of a straight and a flush, e.g. "2", "3", "4", "5", "6" of the same suit.
      *
      * @param deck The deck of cards to evaluate.
-     * @return -1 if no straight was found, 0 for the weakest straight, ascending for every stronger straight!
+     * @return -1 if no straight flush was found, 0 for the weakest straight flush, ascending for every stronger straight flush!
      */
     public static int checkForStraightFlush(final String[] deck) {
         for (final char suit : SUITS) {
