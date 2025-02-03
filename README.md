@@ -5,6 +5,7 @@ A Spring Boot project that provides a REST API and Websocket service for a Poker
 [![Java](https://img.shields.io/badge/Java-21-red.svg?logo=java)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.2-brightgreen.svg?logo=spring)](https://spring.io/projects/spring-boot)
 [![Gradle](https://img.shields.io/badge/Gradle-8.11.1-green.svg?logo=gradle)](https://gradle.org/)
+[![JUnit](https://img.shields.io/badge/JUnit-5.11.4-blue.svg?logo=junit)](https://junit.org/junit5/)
 
 ## Internal API (use case)
 
