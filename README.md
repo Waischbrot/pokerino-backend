@@ -22,7 +22,8 @@ private final DeckRankingUseCase deckRankingUseCase;
 
 public void test() {
     String[] hand = { "2H", "3D", "5S", "9C", "KD", "2C", "3H" };
-    this.deckRankingUseCase.evaluateHand(hand);
+    DeckRanking ranking = deckRankingUseCase.evaluateHand(hand);
+    // Do stuff with ranking
 }
 ```
 
