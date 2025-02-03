@@ -29,3 +29,22 @@ public void test() {
 
 [Interface](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java) | 
 [Service Implementation](src/main/java/org/pokerino/backend/application/service/DeckRankingService.java)
+
+## Domain Model
+
+### Card Stacks
+
+Imagine a CardStack instance just like a stack of cards placed on the table, where you can take cards from.
+
+> Creating a new instance:
+> ```Java
+> CardStack deck = CardStack.create();
+>```
+
+> Taking a card from the stack:
+> ```Java
+> String card = deck.take();
+> ```
+> Throws an IllegalStateException if the stack is empty.
+
+[Implementation](src/main/java/org/pokerino/backend/domain/cards/CardStack.java)
