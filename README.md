@@ -26,4 +26,5 @@ public void test() {
 }
 ```
 
-[Click to view source](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java)
+[Interface](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java) | 
+[Service Implementation](src/main/java/org/pokerino/backend/application/service/DeckRankingService.java)
