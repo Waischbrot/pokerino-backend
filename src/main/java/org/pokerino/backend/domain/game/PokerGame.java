@@ -14,19 +14,16 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PokerGame implements Joinable {
+    private static final int MAX_PLAYERS = 5;
+
     final UUID gameId;
     final Table table;
     final List<GamePlayer> participants;
 
-    private PokerGame(UUID gameId, Table table) {
+    public PokerGame(UUID gameId, Table table) {
         this.gameId = gameId;
         this.table = table;
         this.participants = new ArrayList<>();
-    }
-
-    @Override
-    public int tableCost() {
-        return 0; // Todo: Implement by table method
     }
 
     @Override
@@ -36,7 +33,7 @@ public class PokerGame implements Joinable {
                     "User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding."
             );
         }
-        final GamePlayer gamePlayer = new GamePlayer(userId, tableCost());
+        final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartingChips());
         this.participants.add(
                 ThreadLocalRandom.current().nextInt(this.participants.size() + 1),
                 gamePlayer
@@ -70,6 +67,6 @@ public class PokerGame implements Joinable {
 
     @Override
     public int maxPlayers() {
-        return 0; // Todo: Implement by table method
+        return MAX_PLAYERS;
     }
 }
