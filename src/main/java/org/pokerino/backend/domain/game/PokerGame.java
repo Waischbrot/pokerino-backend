@@ -20,9 +20,9 @@ public class PokerGame implements Joinable {
     final Table table;
     final List<GamePlayer> participants;
 
-    public PokerGame(UUID gameId, Table table) {
-        this.gameId = gameId;
+    public PokerGame(Table table) {
         this.table = table;
+        this.gameId = UUID.randomUUID();
         this.participants = new ArrayList<>();
     }
 
