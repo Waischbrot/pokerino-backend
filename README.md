@@ -48,3 +48,32 @@ Imagine a CardStack instance just like a stack of cards placed on the table, whe
 > Throws an IllegalStateException if the stack is empty.
 
 [Implementation](src/main/java/org/pokerino/backend/domain/cards/CardStack.java)
+
+### Game Instances
+
+For every running game, there has to be one game instance in the backend.
+This instance does not implement the game logic, but it holds the necessary data to do so.
+
+> Creating a new instance:
+> ```Java
+> // Initialise table information here and parse to constructor
+> PokerGame game = new PokerGame(table);
+> ```
+
+PokerGame implements the [Joinable](src/main/java/org/pokerino/backend/domain/game/Joinable.java) interface, which allows user management.
+
+> How to use:
+> ```Java
+> // Add a user to the game
+> game.addPlayer(long userId);
+> // Remove a user from the game
+> game.removePlayer(long userId);
+> // Check if a user is in the game
+> game.contains(long userId);
+> // Get the number of players in the game
+> game.currentPlayers();
+> // Get max amount of players
+> game.maxPlayers();
+> ```
+
+[Implementation](src/main/java/org/pokerino/backend/domain/game/PokerGame.java)
