@@ -60,7 +60,7 @@ This instance does not implement the game logic, but it holds the necessary data
 > PokerGame game = new PokerGame(table);
 > ```
 
-PokerGame implements the [Joinable](src/main/java/org/pokerino/backend/domain/game/Joinable.java) interface, which allows user management.
+PokerGame implements the [Joinable](src/main/java/org/pokerino/backend/domain/game/Joinable.java) interface, which adds basic user management.
 
 > How to use:
 > ```Java
@@ -77,3 +77,9 @@ PokerGame implements the [Joinable](src/main/java/org/pokerino/backend/domain/ga
 > ```
 
 [Implementation](src/main/java/org/pokerino/backend/domain/game/PokerGame.java)
+
+Every user within a game is stored as [GamePlayer](src/main/java/org/pokerino/backend/domain/game/GamePlayer.java), which holds the following attributes for the game:
+
+- `int total` - The total amount of chips
+- `int bet` - The current bet
+- `String[] hand` - The user's hand
