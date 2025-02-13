@@ -30,6 +30,20 @@ public void test() {
 [Interface](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java) | 
 [Service Implementation](src/main/java/org/pokerino/backend/application/service/DeckRankingService.java)
 
+### Finding the players with the strongest hands
+
+```Java
+private final FindStrongestHandUseCase findStrongestHandUseCase;
+
+public void test(PokerGame game) {
+    // Call to find the players with the strongest hands this round
+    List<GamePlayer> winningPlayers = findStrongestHandUseCase.findStrongestHands(game);
+}
+```
+
+[Interface](src/main/java/org/pokerino/backend/application/port/in/FindStrongestHandUseCase.java) |
+[Service Implementation](src/main/java/org/pokerino/backend/application/service/FindStrongestHandService.java)
+
 ## Domain Model
 
 ### Card Stacks
