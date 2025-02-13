@@ -90,6 +90,14 @@ public class PokerGame implements Joinable {
         return this.players.get((this.dealer + 2) % this.players.size());
     }
 
+    @NonNull
+    public String[] mergeHands(final String[] playerHand) {
+        final String[] merged = new String[7];
+        System.arraycopy(playerHand, 0, merged, 0, 2);
+        System.arraycopy(this.cardsOnTable, 0, merged, 2, 5);
+        return merged;
+    }
+
     public void moveDealer() {
         this.dealer = (this.dealer + 1) % this.players.size();
     }
@@ -100,7 +108,7 @@ public class PokerGame implements Joinable {
         }
     }
 
-    public void resetPlayers() {
+    public void resetParticipants() {
         for (GamePlayer participant : this.participants) {
             participant.setBet(0);
             participant.setFolded(false);
