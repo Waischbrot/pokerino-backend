@@ -21,10 +21,21 @@ public class GamePlayer {
         this.total = total;
     }
 
+    /**
+     * Checks if the player is still in the game but has no more chips left. (ALL-IN)
+     * @return True if the player is all-in, false otherwise.
+     */
     public boolean isAllIn() {
+        if (dead) {
+            return false;
+        }
         return this.total == 0;
     }
 
+    /**
+     * Sets the hand of the player. Only to be called with 2 cards.
+     * @param hand The hand of the player.
+     */
     public void setHand(String... hand) {
         if (hand.length != 2) {
             throw new IllegalStateException("Too many cards present!");
