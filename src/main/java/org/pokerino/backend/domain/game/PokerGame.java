@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.domain.exception.GameAlreadyStartedException;
+import org.pokerino.backend.domain.exception.GameFullException;
 import org.pokerino.backend.domain.exception.UserAlreadyPresentException;
 import org.pokerino.backend.domain.exception.UserNotPresentException;
 
@@ -41,6 +42,9 @@ public class PokerGame implements Joinable {
         }
         if (contains(userId)) {
             throw new UserAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
+        }
+        if (participants.size() >= MAX_PLAYERS) {
+            throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
         }
         final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartingChips());
         this.participants.add(ThreadLocalRandom.current().nextInt(this.participants.size() + 1), gamePlayer);
