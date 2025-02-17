@@ -30,7 +30,9 @@ dependencies {
 	//implementation 'org.springframework.boot:spring-boot-starter-mail'
 	//implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-	//implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'com.fasterxml.jackson.core:jackson-core' // Added in order to parse JSON
+	implementation 'com.fasterxml.jackson.core:jackson-databind' // Added in order to parse JSON
 	compileOnly 'org.projectlombok:lombok'
 	//runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
