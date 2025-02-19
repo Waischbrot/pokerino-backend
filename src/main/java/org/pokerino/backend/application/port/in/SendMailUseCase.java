@@ -1,6 +1,6 @@
 package org.pokerino.backend.application.port.in;
 
-import org.springframework.messaging.MessagingException;
+import jakarta.mail.MessagingException;
 
 public interface SendMailUseCase {
     /**
