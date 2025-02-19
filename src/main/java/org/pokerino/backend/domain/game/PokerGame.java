@@ -26,8 +26,8 @@ public class PokerGame implements Joinable {
     int dealer; // Keeps the index of where the dealer is located
     boolean started; // Is this game still queueing or has it already begun?
 
-    public PokerGame(Table table) {
-        this.gameId = UUID.randomUUID();
+    public PokerGame(UUID uuid, Table table) {
+        this.gameId = uuid;
         this.table = table;
         this.participants = new ArrayList<>();
         this.players = new ArrayList<>();
