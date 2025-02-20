@@ -1,5 +1,6 @@
 package org.pokerino.backend.adapter.out.persistence;
 
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,8 +34,8 @@ public class UserPersistenceAdapter implements LoadUserPort, SaveUserPort, Count
     }
 
     @Override
-    public void saveUser(User user) {
-        this.userJPARepository.save(user);
+    public User saveUser(User user) {
+        return this.userJPARepository.save(user);
     }
 
     @Override
