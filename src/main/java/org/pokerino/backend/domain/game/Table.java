@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public enum Table {
+    // Task: Think of 7 different tables with unique buy ins and values for players to play at!
     ;
 
     String name; // The name of the table
