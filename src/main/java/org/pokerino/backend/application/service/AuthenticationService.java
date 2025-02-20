@@ -12,24 +12,44 @@ import org.pokerino.backend.application.port.in.SendMailUseCase;
 import org.pokerino.backend.application.port.out.LoadUserPort;
 import org.pokerino.backend.application.port.out.SaveUserPort;
 import org.pokerino.backend.domain.user.User;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AuthenticationService implements AuthenticationUseCase {
     SendMailUseCase sendMailUseCase;
+    PasswordEncoder passwordEncoder;
+    AuthenticationManager authenticationManager;
     LoadUserPort loadUserPort;
     SaveUserPort saveUserPort;
 
     @Override
-    public User signup(RegisterUserDto regiserUserDto) {
-        return null;
+    public User signup(RegisterUserDto registerUserDto) {
+        final User user = new User(registerUserDto.username(), registerUserDto.email(), registerUserDto.password());
+        user.setVerificationCode(generateVerificationCode());
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setEnabled(false);
+        sendVerificationEmail(user);
+        return this.saveUserPort.saveUser(user);
     }
 
     @Override
     public User authenticate(LoginUserDto loginUserDto) {
-        return null;
+        final User user = this.loadUserPort.findByEmail(loginUserDto.email())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!user.isEnabled()) {
+            throw new RuntimeException("Account not verified. Please verify your account.");
+        }
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password())
+        );
+        return user;
     }
 
     @Override
