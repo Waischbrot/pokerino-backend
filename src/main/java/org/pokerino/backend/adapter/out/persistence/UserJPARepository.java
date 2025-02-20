@@ -8,6 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface UserJPARepository extends CrudRepository<User, Long> {
+    Optional<User> findByUsername(String username);
+
     Optional<User> findByEmail(String email);
 
     Optional<User> findByVerificationCode(String verificationCode);
