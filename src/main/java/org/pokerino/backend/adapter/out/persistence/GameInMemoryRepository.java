@@ -1,16 +1,19 @@
 package org.pokerino.backend.adapter.out.persistence;
 
-import org.pokerino.backend.application.port.out.GamesRepository;
+import org.pokerino.backend.application.port.out.LoadGamePort;
+import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.domain.game.PokerGame;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GamesInMemoryRepository implements GamesRepository {
+@Repository
+public class GameInMemoryRepository implements LoadGamePort, ManageGamePort {
     private final ConcurrentHashMap<UUID, PokerGame> games;
 
-    public GamesInMemoryRepository() {
+    public GameInMemoryRepository() {
         this.games = new ConcurrentHashMap<>();
     }
 
