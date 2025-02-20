@@ -55,4 +55,6 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // Todo: Replace all User returns against custom responses, for example, return a RegisterResponse instead of User and so on!
 }

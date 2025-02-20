@@ -32,7 +32,8 @@ public class AuthenticationService implements AuthenticationUseCase {
 
     @Override
     public User signup(RegisterUserDto registerUserDto) {
-        final User user = new User(registerUserDto.username(), registerUserDto.email(), registerUserDto.password());
+        final String encodedPassword = this.passwordEncoder.encode(registerUserDto.password());
+        final User user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1)); // One hour until code expires
         user.setEnabled(false);
@@ -47,6 +48,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");
         }
+        // Todo: Catch FUCKING AuthenticationException because otherwise your apartment will burn down
         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password())
         );
