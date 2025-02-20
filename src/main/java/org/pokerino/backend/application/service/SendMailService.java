@@ -8,7 +8,9 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.application.port.in.SendMailUseCase;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SendMailService implements SendMailUseCase {
