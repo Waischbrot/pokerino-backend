@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,7 +34,7 @@ public class AuthenticationService implements AuthenticationUseCase {
     public User signup(RegisterUserDto registerUserDto) {
         final User user = new User(registerUserDto.username(), registerUserDto.email(), registerUserDto.password());
         user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
+        user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1)); // One hour until code expires
         user.setEnabled(false);
         sendVerificationEmail(user);
         return this.saveUserPort.saveUser(user);
@@ -46,7 +47,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");
         }
-        authenticationManager.authenticate(
+        this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password())
         );
         return user;
@@ -54,12 +55,40 @@ public class AuthenticationService implements AuthenticationUseCase {
 
     @Override
     public void verifyUser(VerifyUserDto verifyUserDto) {
-
+        final Optional<User> optionalUser = this.loadUserPort.findByEmail(verifyUserDto.email());
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("Verification code has expired");
+            }
+            if (user.getVerificationCode().equals(verifyUserDto.verificationCode())) {
+                user.setEnabled(true);
+                user.setVerificationCode(null);
+                user.setVerificationCodeExpiresAt(null);
+                this.saveUserPort.saveUser(user);
+            } else {
+                throw new RuntimeException("Invalid verification code");
+            }
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
     @Override
     public void resendVerificationCode(String email) {
-
+        final Optional<User> optionalUser = this.loadUserPort.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            final User user = optionalUser.get();
+            if (user.isEnabled()) {
+                throw new RuntimeException("Account is already verified");
+            }
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1)); // One hour until code expires
+            sendVerificationEmail(user);
+            this.saveUserPort.saveUser(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
     private void sendVerificationEmail(User user) {
