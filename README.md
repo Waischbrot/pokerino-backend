@@ -7,6 +7,36 @@ A Spring Boot project that provides a REST API and Websocket service for a Poker
 [![Gradle](https://img.shields.io/badge/Gradle-8.11.1-green.svg?logo=gradle)](https://gradle.org/)
 [![JUnit](https://img.shields.io/badge/JUnit-5.11.4-blue.svg?logo=junit)](https://junit.org/junit5/)
 
+## External API Endpoints
+
+Due to the different purposes which this backend serves, 2 different communication protocols are used: REST and Websockets.
+e.g. REST for user authentication or character information and Websockets for the gameplay itself.
+
+### Authentication (REST)
+
+#### **POST** `/auth/signup`
+Register a new account to the backend
+> Input (data to create a new account)
+> ```json
+> {
+>   "username": "username",
+>   "email": "email",  
+>   "password": "password"
+> }
+> ```
+
+> Return (new account data if successful)
+> ```json
+> {
+>   "id": 1,
+>   "username": "username",
+>   "email": "email",
+>   "verificationCode": "code",
+>   "verificationCodeExpiresAt": "timestamp",
+>   "enabled": false
+> }
+> ```
+
 ## Internal API (use case)
 
 Internal services and adapters can interact with each other using UseCases.
