@@ -31,8 +31,6 @@ Register a new account to the backend
 >   "id": 1,
 >   "username": "username",
 >   "email": "email",
->   "verificationCode": "code",
->   "verificationCodeExpiresAt": "timestamp",
 >   "enabled": false
 > }
 > ```
