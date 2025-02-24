@@ -1,6 +1,7 @@
 package org.pokerino.backend.application.service;
 
 import jakarta.annotation.Nonnull;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -94,12 +95,26 @@ public class AuthenticationService implements AuthenticationUseCase {
     }
 
     private void sendVerificationEmail(User user) {
-        // Task: Send a nicely formatted HTML email to the user's email address
-        // It should contain the users verification code
-        // The styling should also contain our companies' logo!
+        final String subject = "Account Verification";
+        final String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
+        final String htmlMessage = "<html>"
+                + "<body style=\"font-family: Arial, sans-serif;\">"
+                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                + "<h2 style=\"color: #333;\">Welcome to Pokerino!</h2>"
+                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
+                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "</div>"
+                + "</div>"
+                + "</body>"
+                + "</html>";
 
-        // Attention: The Email Service can throw an exception incase the SMTP Server is not reachable,
-        // catch it here and handle it!
+        try {
+            this.sendMailUseCase.sendMail(user.getEmail(), subject, htmlMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send verification email");
+        }
     }
 
     @Nonnull
