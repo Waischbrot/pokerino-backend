@@ -35,6 +35,24 @@ Register a new account to the backend
 > }
 > ```
 
+### **POST** `/auth/login`
+Login to an existing account using email
+> Input (data to login)
+> ```json
+> {
+>   "email": "email",
+>   "password": "password"
+> }
+> ```
+
+> Return (JWT token if successful)
+> ```json
+> {
+>   "token": "token",
+>   "expiresIn": "<milliseconds>"
+> }
+> ```
+
 ## Internal API (use case)
 
 Internal services and adapters can interact with each other using UseCases.

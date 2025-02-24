@@ -26,7 +26,8 @@ public class AuthenticationController {
     public ResponseEntity<RegisterResponse> signup(@RequestBody RegisterUserDto registerUserDto) {
         final User registeredUser = this.authenticationUseCase.signup(registerUserDto);
 
-        // Todo: Catch exceptions for different responses - for example what if account with email already exists? Or other things!
+        // Todo: Catch exceptions for different responses - for example what if account with email already exists?
+        // Can be handled like in resendVerificationCode()!
 
         final RegisterResponse response = new RegisterResponse(
                 registeredUser.getId(),
@@ -64,6 +65,4 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    // Todo: Replace all User returns against custom responses, for example, return a RegisterResponse instead of User and so on!
 }
