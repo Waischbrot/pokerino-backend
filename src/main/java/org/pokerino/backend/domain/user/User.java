@@ -31,12 +31,24 @@ public class User implements UserDetails {
     String verificationCode;
     @Column(name = "verification_expiration")
     LocalDateTime verificationCodeExpiresAt;
+
+    @Column(name = "join_date")
+    LocalDateTime joinDate;
+
+    @Column
+    long chips;
+    @Column
+    int gold;
+    @Column
+    long experience;
+
     boolean enabled;
 
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.joinDate = LocalDateTime.now();
     }
 
     public User() {}

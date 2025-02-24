@@ -33,6 +33,13 @@ public class AuthenticationService implements AuthenticationUseCase {
 
     @Override
     public User signup(RegisterUserDto registerUserDto) {
+
+        // Todo: Check if there is already a User with this Mail
+
+        // Todo: Filter against email domain blacklist for antibot protection
+
+        // Todo: Check if there is already a User with this Username
+
         final String encodedPassword = this.passwordEncoder.encode(registerUserDto.password());
         final User user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
         user.setVerificationCode(generateVerificationCode());
@@ -42,6 +49,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         return this.saveUserPort.saveUser(user);
     }
 
+    // Needs heavy rework!
     @Override
     public User authenticate(LoginUserDto loginUserDto) {
         final User user = this.loadUserPort.findByEmail(loginUserDto.email())
@@ -49,10 +57,12 @@ public class AuthenticationService implements AuthenticationUseCase {
         if (!user.isEnabled()) {
             throw new RuntimeException("Account not verified. Please verify your account.");
         }
-        // Todo: Catch FUCKING AuthenticationException because otherwise your apartment will burn down
+        // Todo: Catch FUCKING AuthenticationException because otherwise your apartment will burn down!
+
+        // Todo: This is kind of bad -> requests user data again, login could be verified right here!
         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password())
-        );
+        ); // -> Maybe UserDetails / User object can be extracted from this?
         return user;
     }
 
