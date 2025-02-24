@@ -7,6 +7,7 @@ import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
 import org.pokerino.backend.adapter.in.dto.VerifyUserDto;
 import org.pokerino.backend.adapter.in.response.LoginResponse;
+import org.pokerino.backend.adapter.in.response.RegisterResponse;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.in.JWTUseCase;
 import org.pokerino.backend.domain.user.User;
@@ -22,10 +23,18 @@ public class AuthenticationController {
     AuthenticationUseCase authenticationUseCase;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<RegisterResponse> signup(@RequestBody RegisterUserDto registerUserDto) {
         final User registeredUser = this.authenticationUseCase.signup(registerUserDto);
-        // Todo: Handle errors & other responses - for example what if account with email already exists? Or other things!
-        return ResponseEntity.ok(registeredUser);
+
+        // Todo: Catch exceptions for different responses - for example what if account with email already exists? Or other things!
+
+        final RegisterResponse response = new RegisterResponse(
+                registeredUser.getId(),
+                registeredUser.getUsername(),
+                registeredUser.getEmail(),
+                registeredUser.isEnabled()
+        );
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
