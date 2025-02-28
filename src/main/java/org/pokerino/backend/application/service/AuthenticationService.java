@@ -34,11 +34,11 @@ public class AuthenticationService implements AuthenticationUseCase {
     @Override
     public User signup(RegisterUserDto registerUserDto) {
 
-        // Todo: Check if there is already a User with this Mail
+        // Todo: Check if there is already a User with this Mail (Or test -> the user with email x might not even be created, since db has unique field)
 
         // Todo: Filter against email domain blacklist for antibot protection
 
-        // Todo: Check if there is already a User with this Username
+        // Todo: Check if there is already a User with this Username (Or test as described above)
 
         final String encodedPassword = this.passwordEncoder.encode(registerUserDto.password());
         final User user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
