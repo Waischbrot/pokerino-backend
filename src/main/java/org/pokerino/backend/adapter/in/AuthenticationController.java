@@ -23,27 +23,31 @@ public class AuthenticationController {
     AuthenticationUseCase authenticationUseCase;
 
     @PostMapping("/signup")
-    public ResponseEntity<RegisterResponse> signup(@RequestBody RegisterUserDto registerUserDto) {
-        final User registeredUser = this.authenticationUseCase.signup(registerUserDto);
-
-        // Todo: Catch exceptions for different responses - for example what if account with email already exists?
-        // Can be handled like in resendVerificationCode()!
-
-        final RegisterResponse response = new RegisterResponse(
-                registeredUser.getId(),
-                registeredUser.getUsername(),
-                registeredUser.getEmail(),
-                registeredUser.isEnabled()
-        );
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> signup(@RequestBody RegisterUserDto registerUserDto) {
+        try {
+            final User registeredUser = this.authenticationUseCase.signup(registerUserDto);
+            final RegisterResponse response = new RegisterResponse(
+                    registeredUser.getId(),
+                    registeredUser.getUsername(),
+                    registeredUser.getEmail(),
+                    registeredUser.isEnabled()
+            );
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
-        final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
-        final LoginResponse loginResponse = new LoginResponse(jwtToken, this.jwtUseCase.getExpirationTime());
-        return ResponseEntity.ok(loginResponse);
+    public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
+        try {
+            final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
+            final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
+            final LoginResponse loginResponse = new LoginResponse(jwtToken, this.jwtUseCase.getExpirationTime());
+            return ResponseEntity.ok(loginResponse);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/verify")
