@@ -1,7 +1,6 @@
 package org.pokerino.backend.application.service;
 
 import jakarta.annotation.Nonnull;
-import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,15 +30,11 @@ public class AuthenticationService implements AuthenticationUseCase {
     LoadUserPort loadUserPort;
     SaveUserPort saveUserPort;
 
+    // Todo: Check if there is already a User with this Mail (Or test -> the user with email x might not even be created, since db has unique field)
+    // Todo: Filter against email domain blacklist for antibot protection
+    // Todo: Check if there is already a User with this Username (Or test as described above)
     @Override
     public User signup(RegisterUserDto registerUserDto) {
-
-        // Todo: Check if there is already a User with this Mail (Or test -> the user with email x might not even be created, since db has unique field)
-
-        // Todo: Filter against email domain blacklist for antibot protection
-
-        // Todo: Check if there is already a User with this Username (Or test as described above)
-
         final String encodedPassword = this.passwordEncoder.encode(registerUserDto.password());
         final User user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
         user.setVerificationCode(generateVerificationCode());
@@ -122,7 +117,7 @@ public class AuthenticationService implements AuthenticationUseCase {
 
         try {
             this.sendMailUseCase.sendMail(user.getEmail(), subject, htmlMessage);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to send verification email");
         }
     }
