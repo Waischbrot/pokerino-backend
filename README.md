@@ -28,7 +28,7 @@ Register a new account to the backend
 > Return (new account data if successful)
 > ```json
 > {
->   "id": 1,
+>   "id": "9165850c-b582-4290-b51e-ffe731825456",
 >   "username": "username",
 >   "email": "email",
 >   "enabled": false
