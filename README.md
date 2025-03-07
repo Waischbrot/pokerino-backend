@@ -35,7 +35,7 @@ Register a new account to the backend
 > }
 > ```
 
-### **POST** `/auth/login`
+#### **POST** `/auth/login`
 Login to an existing account using email
 > Input (data to login)
 > ```json
@@ -53,7 +53,7 @@ Login to an existing account using email
 > }
 > ```
 
-### **POST** `/auth/verify`
+#### **POST** `/auth/verify`
 Verify the account using the code sent to the email
 > Input (verification code)
 > ```json
@@ -63,7 +63,7 @@ Verify the account using the code sent to the email
 > }
 > ```
 
-### **POST** `/auth/resend`
+#### **POST** `/auth/resend`
 Resend the verification code to the email
 > Input (email)
 > ```json
