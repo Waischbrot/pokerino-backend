@@ -1,6 +1,5 @@
 package org.pokerino.backend.adapter.out.persistence;
 
-import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

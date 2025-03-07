@@ -4,10 +4,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.domain.exception.GameAlreadyStartedException;
-import org.pokerino.backend.domain.exception.GameFullException;
-import org.pokerino.backend.domain.exception.UserAlreadyPresentException;
-import org.pokerino.backend.domain.exception.UserNotPresentException;
+import org.pokerino.backend.domain.exception.game.GameAlreadyStartedException;
+import org.pokerino.backend.domain.exception.game.GameFullException;
+import org.pokerino.backend.domain.exception.game.UserAlreadyPresentException;
+import org.pokerino.backend.domain.exception.game.UserNotPresentException;
 
 import java.util.ArrayList;
 import java.util.List;

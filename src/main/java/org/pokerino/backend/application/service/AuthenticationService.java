@@ -114,7 +114,6 @@ public class AuthenticationService implements AuthenticationUseCase {
                 + "</div>"
                 + "</body>"
                 + "</html>";
-
         try {
             this.sendMailUseCase.sendMail(user.getEmail(), subject, htmlMessage);
         } catch (Exception e) {

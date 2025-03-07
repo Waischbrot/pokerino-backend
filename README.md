@@ -53,6 +53,25 @@ Login to an existing account using email
 > }
 > ```
 
+### **POST** `/auth/verify`
+Verify the account using the code sent to the email
+> Input (verification code)
+> ```json
+> {
+>  "email": "email",
+>  "verificationCode": "code"
+> }
+> ```
+
+### **POST** `/auth/resend`
+Resend the verification code to the email
+> Input (email)
+> ```json
+> {
+>  "email": "email"
+> }
+> ```
+
 ## Internal API (use case)
 
 Internal services and adapters can interact with each other using UseCases.

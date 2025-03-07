@@ -69,4 +69,8 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    // Todo: Forgot password endpoint
+
+    // Todo: Endpoint for checking if a username is already taken! -> Ignore Case
 }
