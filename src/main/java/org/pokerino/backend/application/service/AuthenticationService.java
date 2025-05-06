@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
-import org.pokerino.backend.adapter.in.dto.VerifyUserDto;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.in.SendMailUseCase;
 import org.pokerino.backend.application.port.out.LoadUserPort;

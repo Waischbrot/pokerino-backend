@@ -2,11 +2,10 @@ package org.pokerino.backend.application.port.in;
 
 import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
-import org.pokerino.backend.adapter.in.dto.VerifyUserDto;
 import org.pokerino.backend.domain.user.User;
 
 public interface AuthenticationUseCase {
-    User signup(RegisterUserDto regiserUserDto);
+    void signup(RegisterUserDto registerUserDto);
 
     User authenticate(LoginUserDto loginUserDto);
 

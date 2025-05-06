@@ -18,29 +18,39 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class AuthenticationController {
+public final class AuthenticationController {
     JWTUseCase jwtUseCase;
     AuthenticationUseCase authenticationUseCase;
 
+    /**
+     * Sign up a new user using the provided credentials.
+     * @param registerUserDto Email, Password, Username for this user
+     * @return Status & message indicating success or failure
+     */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody RegisterUserDto registerUserDto) {
         try {
             this.authenticationUseCase.signup(registerUserDto);
             return ResponseEntity.ok("User registered successfully");
-        } catch (RuntimeException e) {
+        } catch (final Exception exception) {
             return ResponseEntity.internalServerError().body("User could not be registered");
         }
     }
 
+    /**
+     * Authenticate a user using the provided credentials.
+     * @param loginUserDto Email, Password for this user
+     * @return Username and Password for user
+     */
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
         try {
             final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
             final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
-            final LoginResponse loginResponse = new LoginResponse(jwtToken, this.jwtUseCase.getExpirationTime());
+            final LoginResponse loginResponse = new LoginResponse(jwtToken, authenticatedUser.getUsername());
             return ResponseEntity.ok(loginResponse);
-        } catch (RuntimeException e) { // Todo: Replace against specific exceptions
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (final Exception exception) {
+            return ResponseEntity.internalServerError().body("User could not be logged in");
         }
     }
 
