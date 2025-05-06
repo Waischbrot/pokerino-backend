@@ -6,8 +6,8 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.domain.exception.game.GameAlreadyStartedException;
 import org.pokerino.backend.domain.exception.game.GameFullException;
-import org.pokerino.backend.domain.exception.game.UserAlreadyPresentException;
-import org.pokerino.backend.domain.exception.game.UserNotPresentException;
+import org.pokerino.backend.domain.exception.game.PlayerAlreadyPresentException;
+import org.pokerino.backend.domain.exception.game.PlayerNotPresentException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class PokerGame implements Joinable {
             throw new GameAlreadyStartedException("Game: '" + gameId + "' has already started! Failed adding user: '" + userId + "'.");
         }
         if (contains(userId)) {
-            throw new UserAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
+            throw new PlayerAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
         }
         if (participants.size() >= MAX_PLAYERS) {
             throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
@@ -53,7 +53,7 @@ public class PokerGame implements Joinable {
     @Override
     public void removePlayer(long userId) {
         if (!contains(userId)) {
-            throw new UserNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
+            throw new PlayerNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
         }
         this.participants.removeIf(participant -> participant.getUserId() == userId);
     }
