@@ -5,13 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
-import org.pokerino.backend.adapter.in.dto.ResetPasswordDto;
-import org.pokerino.backend.adapter.in.dto.VerifyUserDto;
 import org.pokerino.backend.adapter.in.response.LoginResponse;
-import org.pokerino.backend.adapter.in.response.RegisterResponse;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.in.JWTUseCase;
-import org.pokerino.backend.domain.exception.auth.InvalidPasswordException;
 import org.pokerino.backend.domain.exception.auth.UserAlreadyVerifiedException;
 import org.pokerino.backend.domain.exception.auth.UserNotFoundException;
 import org.pokerino.backend.domain.user.User;
@@ -29,16 +25,10 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody RegisterUserDto registerUserDto) {
         try {
-            final User registeredUser = this.authenticationUseCase.signup(registerUserDto);
-            final RegisterResponse response = new RegisterResponse(
-                    registeredUser.getId(),
-                    registeredUser.getUsername(),
-                    registeredUser.getEmail(),
-                    registeredUser.isEnabled()
-            );
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) { // Todo: Replace against specific exceptions
-            return ResponseEntity.badRequest().body(e.getMessage());
+            this.authenticationUseCase.signup(registerUserDto);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body("User could not be registered");
         }
     }
 
@@ -76,30 +66,8 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping("/forgot")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
-        try {
-            this.authenticationUseCase.forgotPassword(email);
-            return ResponseEntity.ok("Password reset link sent");
-            // IllegalStateException: Mail could not be sent (example: spam)
-        } catch (UserNotFoundException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/reset")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        try {
-            this.authenticationUseCase.resetPassword(resetPasswordDto);
-            return ResponseEntity.ok("Password reset successfully");
-            // IllegalStateException: There is no active request for password reset
-        } catch (UserNotFoundException | InvalidPasswordException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("/username")
-    public ResponseEntity<Boolean> getUsername(@RequestParam String username) {
+    public ResponseEntity<Boolean> username(@RequestParam String username) {
         return ResponseEntity.ok(this.authenticationUseCase.isUsernameTaken(username));
     }
 }
