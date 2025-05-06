@@ -8,8 +8,6 @@ import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
 import org.pokerino.backend.adapter.in.response.LoginResponse;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.in.JWTUseCase;
-import org.pokerino.backend.domain.exception.auth.UserAlreadyVerifiedException;
-import org.pokerino.backend.domain.exception.auth.UserNotFoundException;
 import org.pokerino.backend.domain.user.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,28 +52,41 @@ public final class AuthenticationController {
         }
     }
 
+    /**
+     * Verify a user using the provided verification code.
+     * @param verificationCode Verification code for this user
+     * @return Status & message indicating success or failure
+     */
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDto verifyUserDto) {
+    public ResponseEntity<?> verifyUser(@RequestParam String verificationCode) {
         try {
-            this.authenticationUseCase.verifyUser(verifyUserDto);
+            this.authenticationUseCase.verifyUser(verificationCode);
             return ResponseEntity.ok("Account verified successfully");
-            // IllegalStateException: Verification code is invalid
-        } catch (UserAlreadyVerifiedException | UserNotFoundException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (final Exception exception) {
+            return ResponseEntity.internalServerError().body("User could not be verified");
         }
     }
 
+    /**
+     * Resend the verification code to the user.
+     * @param email Email of the user
+     * @return Status & message indicating success or failure
+     */
     @PostMapping("/resend")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try {
             this.authenticationUseCase.resendVerificationCode(email);
             return ResponseEntity.ok("Verification code sent");
-            // IllegalStateException: Mail could not be sent (example: spam)
-        } catch (UserAlreadyVerifiedException | UserNotFoundException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (final Exception exception) {
+            return ResponseEntity.internalServerError().body("Verification code could not be sent");
         }
     }
 
+    /**
+     * Check if the given username is already taken.
+     * @param username Username to check
+     * @return True if the username is taken, false otherwise
+     */
     @GetMapping("/username")
     public ResponseEntity<Boolean> username(@RequestParam String username) {
         return ResponseEntity.ok(this.authenticationUseCase.isUsernameTaken(username));
