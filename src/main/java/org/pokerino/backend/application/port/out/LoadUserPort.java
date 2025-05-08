@@ -9,5 +9,7 @@ public interface LoadUserPort {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUsername(String username);
+
     Optional<User> findByVerificationCode(String verificationCode);
 }

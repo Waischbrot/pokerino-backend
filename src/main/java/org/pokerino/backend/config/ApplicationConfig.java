@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.application.port.out.LoadUserPort;
+import org.pokerino.backend.domain.user.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +23,13 @@ public class ApplicationConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return email -> this.loadUserPort.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
+        return username -> {
+            final var temp = this.loadUserPort.findByUsername(username);
+            final User user = temp.orElseThrow(
+                    () -> new UsernameNotFoundException("User with username " + username + " not found")
+            );
+            return new UserPrincipal(user);
+        };
     }
 
     @Bean

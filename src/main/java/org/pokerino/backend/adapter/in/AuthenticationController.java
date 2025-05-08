@@ -34,7 +34,7 @@ public class AuthenticationController {
                     registeredUser.getId(),
                     registeredUser.getUsername(),
                     registeredUser.getEmail(),
-                    registeredUser.isEnabled()
+                    true
             );
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) { // Todo: Replace against specific exceptions
