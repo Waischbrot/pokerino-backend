@@ -15,7 +15,9 @@ e.g. REST for user authentication or character information and Websockets for th
 ### Authentication (REST)
 
 #### **POST** `/auth/signup`
+
 Register a new account to the backend
+
 > Input (data to create a new account)
 > ```json
 > {
@@ -25,18 +27,16 @@ Register a new account to the backend
 > }
 > ```
 
-> Return (new account data if successful)
-> ```json
-> {
->   "id": "9165850c-b582-4290-b51e-ffe731825456",
->   "username": "username",
->   "email": "email",
->   "enabled": false
-> }
-> ```
+> Return: 
+> - OK (new account data if successful)
+> - Bad Request (there has been a problem)
+
+---
 
 #### **POST** `/auth/login`
+
 Login to an existing account using email
+
 > Input (data to login)
 > ```json
 > {
@@ -45,32 +45,65 @@ Login to an existing account using email
 > }
 > ```
 
-> Return (JWT token if successful)
+> Return (JWT token in JSON if successful):
 > ```json
 > {
 >   "token": "token",
->   "expiresIn": "<milliseconds>"
+>   "username": "username"
 > }
 > ```
+
+---
 
 #### **POST** `/auth/verify`
+
 Verify the account using the code sent to the email
+
 > Input (verification code)
-> ```json
-> {
->  "email": "email",
->  "verificationCode": "code"
-> }
-> ```
+> - RequestParam "verificationCode"
+
+> Return:
+> - OK (account verified)
+> - Bad Request (user could not be verified)
+
+---
 
 #### **POST** `/auth/resend`
+
 Resend the verification code to the email
-> Input (email)
-> ```json
-> {
->  "email": "email"
-> }
-> ```
+
+> Input (email as RequestParam)
+> - RequestParam "email"
+
+> Return:
+> - OK (verification code sent)
+> - Bad Request (something went wrong)
+
+---
+
+#### **GET** `/auth/username`
+
+Check if a given username is already taken.
+
+> Input (username as RequestParam):
+> - RequestParam "username"
+
+> Return:
+> - `true` if the username is taken
+> - `false` if the username is available
+
+---
+
+#### **GET** `/auth/token`
+
+Validate the provided JWT token.
+
+> Input (token as RequestParam):
+> - RequestParam "token"
+
+> Return:
+> - `true` if the token is valid
+> - `false` if the token is invalid
 
 ## Internal API (use case)
 
