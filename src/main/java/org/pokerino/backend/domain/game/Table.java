@@ -10,12 +10,12 @@ import lombok.experimental.FieldDefaults;
 @Getter
 public enum Table {
     // Task: Think of 7 different tables with unique buy ins and values for players to play at!
-    LowStakes("LowStakes",10000,1000,10,20,360,30000,0),
-    BigStakes("BigStakes",100000,20000,1000,2000,360,300000,0),
-    LowStakesBlitz("LowStakesBlitz",10000,1000,10,20,180,30000,0),
-    BigStakesBlitz("BigStakesBlitz",1000000,20000,1000,2000,360,3000000,0),
-    LowStakesTwoWinners("LowStakesTwoWinners",10000,1000,10,20,360,20000,10000),
-    BigStakesTwoWinners("BigStakesTwoWinners",1000000,20000,1000,2000,360,200000,100000)
+    LOW_STAKES("LowStakes",10000,1000,10,20,360,30000,0,100,10,10),
+    BigStakes("BigStakes",100000,20000,1000,2000,360,300000,0,200,20,20),
+    LowStakesBlitz("LowStakesBlitz",10000,1000,10,20,180,30000,0,100,10,10),
+    BigStakesBlitz("BigStakesBlitz",1000000,20000,1000,2000,360,3000000,0,200,20,20),
+    LowStakesTwoWinners("LowStakesTwoWinners",10000,1000,10,20,360,20000,10000,100,50,10),
+    BigStakesTwoWinners("BigStakesTwoWinners",1000000,20000,1000,2000,360,200000,100000,200,100,20)
     ;
 
 
@@ -27,4 +27,7 @@ public enum Table {
     int blindLevelSeconds; // After how many seconds will the blinds increase (normally doubled)
     int firstPlacePrice; // How much does the first place get?
     int secondPlacePrice; // How much does the second place get?
+    int expPointsFirstPl; // How many experience point does the first place get
+    int expPointsSecondPl; // How many experience point does the second place get
+    int expPointsOthers; // How many experience point does others get
 }
