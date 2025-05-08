@@ -2,8 +2,9 @@ package org.pokerino.backend.application.port.in;
 
 import org.pokerino.backend.domain.user.User;
 
-public interface LevelUseCase {
+import java.util.List;
 
+public interface LevelUseCase {
+   List<Integer> addExperience(User user, long exp);
    int calculateLevel(long exp);
-   void addExperience(User user, long exp);
 }
