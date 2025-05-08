@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
-import org.pokerino.backend.adapter.in.dto.VerifyUserDto;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.in.SendMailUseCase;
 import org.pokerino.backend.application.port.out.LoadUserPort;
@@ -62,6 +61,11 @@ public class AuthenticationService implements AuthenticationUseCase {
     }
 
     @Override
+    public void verifyUser(String verificationCode) {
+
+    }
+
+    /*@Override
     public void verifyUser(VerifyUserDto verifyUserDto) {
         final Optional<User> optionalUser = this.loadUserPort.findByEmail(verifyUserDto.email());
         if (optionalUser.isPresent()) {
@@ -80,7 +84,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         } else {
             throw new RuntimeException("User not found");
         }
-    }
+    }*/
 
     @Override
     public void resendVerificationCode(String email) {
@@ -97,6 +101,11 @@ public class AuthenticationService implements AuthenticationUseCase {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    @Override
+    public boolean isUsernameTaken(String username) {
+        return false;
     }
 
     private void sendVerificationEmail(User user) {
