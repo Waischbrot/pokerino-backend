@@ -31,7 +31,7 @@ public final class AuthenticationController {
             this.authenticationUseCase.signup(registerUserDto);
             return ResponseEntity.ok("User registered successfully");
         } catch (final Exception exception) {
-            return ResponseEntity.internalServerError().body("User could not be registered");
+            return ResponseEntity.badRequest().body("User could not be registered");
         }
     }
 
@@ -48,7 +48,7 @@ public final class AuthenticationController {
             final LoginResponse loginResponse = new LoginResponse(jwtToken, authenticatedUser.getUsername());
             return ResponseEntity.ok(loginResponse);
         } catch (final Exception exception) {
-            return ResponseEntity.internalServerError().body("User could not be logged in");
+            return ResponseEntity.badRequest().body("User could not be logged in");
         }
     }
 
@@ -63,7 +63,7 @@ public final class AuthenticationController {
             this.authenticationUseCase.verifyUser(verificationCode);
             return ResponseEntity.ok("Account verified successfully");
         } catch (final Exception exception) {
-            return ResponseEntity.internalServerError().body("User could not be verified");
+            return ResponseEntity.badRequest().body("User could not be verified");
         }
     }
 
@@ -78,7 +78,7 @@ public final class AuthenticationController {
             this.authenticationUseCase.resendVerificationCode(email);
             return ResponseEntity.ok("Verification code sent");
         } catch (final Exception exception) {
-            return ResponseEntity.internalServerError().body("Verification code could not be sent");
+            return ResponseEntity.badRequest().body("Verification code could not be sent");
         }
     }
 
@@ -90,5 +90,10 @@ public final class AuthenticationController {
     @GetMapping("/username")
     public ResponseEntity<Boolean> username(@RequestParam String username) {
         return ResponseEntity.ok(this.authenticationUseCase.isUsernameTaken(username));
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<Boolean> token(@RequestParam String token) {
+        return ResponseEntity.ok(this.jwtUseCase.isTokenValid(token));
     }
 }

@@ -61,6 +61,11 @@ public class AuthenticationService implements AuthenticationUseCase {
     }
 
     @Override
+    public void verifyUser(String verificationCode) {
+
+    }
+
+    /*@Override
     public void verifyUser(VerifyUserDto verifyUserDto) {
         final Optional<User> optionalUser = this.loadUserPort.findByEmail(verifyUserDto.email());
         if (optionalUser.isPresent()) {
@@ -79,7 +84,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         } else {
             throw new RuntimeException("User not found");
         }
-    }
+    }*/
 
     @Override
     public void resendVerificationCode(String email) {
@@ -96,6 +101,11 @@ public class AuthenticationService implements AuthenticationUseCase {
         } else {
             throw new RuntimeException("User not found");
         }
+    }
+
+    @Override
+    public boolean isUsernameTaken(String username) {
+        return false;
     }
 
     private void sendVerificationEmail(User user) {
