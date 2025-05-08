@@ -31,6 +31,8 @@ Register a new account to the backend
 > - OK (new account data if successful)
 > - Bad Request (there has been a problem)
 
+---
+
 #### **POST** `/auth/login`
 
 Login to an existing account using email
@@ -51,6 +53,8 @@ Login to an existing account using email
 > }
 > ```
 
+---
+
 #### **POST** `/auth/verify`
 
 Verify the account using the code sent to the email
@@ -62,6 +66,8 @@ Verify the account using the code sent to the email
 > - OK (account verified)
 > - Bad Request (user could not be verified)
 
+---
+
 #### **POST** `/auth/resend`
 
 Resend the verification code to the email
@@ -72,6 +78,8 @@ Resend the verification code to the email
 > Return:
 > - OK (verification code sent)
 > - Bad Request (something went wrong)
+
+---
 
 #### **GET** `/auth/username`
 
