@@ -18,7 +18,6 @@ public enum Table {
     BigStakesTwoWinners("BigStakesTwoWinners",1000000,20000,1000,2000,360,200000,100000,200,100,20)
     ;
 
-
     String name; // The name of the table
     int buyIn; // How much does it cost to join the table
     int startingChips; // How many chips does each player start with

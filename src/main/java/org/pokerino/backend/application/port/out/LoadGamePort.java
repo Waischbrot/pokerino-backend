@@ -1,7 +1,9 @@
 package org.pokerino.backend.application.port.out;
 
 import org.pokerino.backend.domain.game.PokerGame;
+import org.pokerino.backend.domain.game.Table;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,4 +28,11 @@ public interface LoadGamePort {
      * @return True if the game exists, false otherwise
      */
     boolean hasGame(UUID gameId);
+
+    /**
+     * Designed to get all games by a specific table
+     * @param table Table object
+     * @return List of PokerGame objects associated with the table
+     */
+    List<PokerGame> getGamesByTable(Table table);
 }

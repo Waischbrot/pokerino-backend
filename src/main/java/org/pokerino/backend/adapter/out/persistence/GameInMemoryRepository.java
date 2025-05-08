@@ -3,8 +3,11 @@ package org.pokerino.backend.adapter.out.persistence;
 import org.pokerino.backend.application.port.out.LoadGamePort;
 import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.domain.game.PokerGame;
+import org.pokerino.backend.domain.game.Table;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +39,17 @@ public class GameInMemoryRepository implements LoadGamePort, ManageGamePort {
     @Override
     public boolean hasGame(UUID gameId) {
         return this.games.containsKey(gameId);
+    }
+
+    @Override
+    public List<PokerGame> getGamesByTable(Table table) {
+        final List<PokerGame> games = new ArrayList<>();
+        for (final PokerGame game : this.games.values()) {
+            if (game.getTable() == table) {
+                games.add(game);
+            }
+        }
+        return games;
     }
 
     @Override
