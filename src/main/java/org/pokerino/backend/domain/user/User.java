@@ -1,11 +1,9 @@
 package org.pokerino.backend.domain.user;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.pokerino.backend.adapter.in.response.UserResponse;
 
 import java.util.Date;
 
@@ -34,5 +32,16 @@ public class User {
         this.email = email;
         this.password = password;
         this.joinDate = new Date();
+    }
+
+    @NonNull
+    public UserResponse toUserResponse() {
+        return new UserResponse(
+                this.username,
+                this.joinDate,
+                this.chips,
+                this.gold,
+                this.experience
+        );
     }
 }
