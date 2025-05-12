@@ -33,11 +33,6 @@ public class UserPersistenceAdapter implements LoadUserPort, SaveUserPort, Count
     }
 
     @Override
-    public Optional<User> findByVerificationCode(String verificationCode) {
-        return this.userJPARepository.findByVerificationCode(verificationCode);
-    }
-
-    @Override
     public User saveUser(User user) {
         return this.userJPARepository.save(user);
     }
