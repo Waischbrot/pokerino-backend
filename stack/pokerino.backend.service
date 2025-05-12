@@ -1,0 +1,14 @@
+[Unit]
+Description=Pokerino Backend
+After=network.target
+
+[Service]
+User=www-data
+WorkingDirectory=/opt/pokerino-backend
+ExecStart=/usr/bin/java -jar pokerinobackend.jar
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
