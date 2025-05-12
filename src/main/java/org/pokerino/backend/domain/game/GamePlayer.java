@@ -14,7 +14,6 @@ public class GamePlayer {
     String[] hand;
     @Setter boolean folded; // Whenever a player folds, this is set to true.
     @Setter boolean dead; // Has this player already lost?
-    // Todo: Add fields that are needed for UI here...
 
     public GamePlayer(long userId, int total) {
         this.userId = userId;

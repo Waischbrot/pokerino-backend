@@ -45,7 +45,7 @@ public final class AuthenticationController {
         try {
             final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
             final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
-            final LoginResponse loginResponse = new LoginResponse(jwtToken, authenticatedUser.getUsername());
+            final LoginResponse loginResponse = new LoginResponse(jwtToken, authenticatedUser.toUserResponse());
             return ResponseEntity.ok(loginResponse);
         } catch (final Exception exception) {
             return ResponseEntity.badRequest().body("User could not be logged in");

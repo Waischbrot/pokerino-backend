@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public final class LevelService implements LevelUseCase {
+    @Override
     public List<Integer> addExperience(User user, long exp) {
         int oldLevel = calculateLevel(user.getExperience());
         user.setExperience(user.getExperience() + exp);
@@ -20,9 +21,10 @@ public final class LevelService implements LevelUseCase {
         return levelUps;
     }
 
+    @Override
     public int calculateLevel(long exp) {
         int level = 1;
-        int requiredExp =  100;
+        int requiredExp = 100;
         while(exp >= requiredExp){
             level++;
             requiredExp *= 2;

@@ -18,4 +18,6 @@ public interface JWTUseCase {
     long getExpirationTime();
 
     boolean isTokenValid(String token, String username);
+
+    boolean isTokenValid(String token);
 }

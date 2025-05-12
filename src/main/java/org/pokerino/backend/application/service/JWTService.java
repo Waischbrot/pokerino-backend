@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.application.port.in.JWTUseCase;
 import org.pokerino.backend.domain.user.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -52,8 +51,22 @@ public class JWTService implements JWTUseCase {
 
     @Override
     public boolean isTokenValid(String token, String username) {
-        final String userName = extractUsername(token);
-        return (userName.equals(username) && !isTokenExpired(token));
+        try {
+            final String userName = extractUsername(token);
+            return (userName.equals(username) && !isTokenExpired(token));
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
     private String buildToken(Map<String, Object> extraClaims, User user, long expiration) {
