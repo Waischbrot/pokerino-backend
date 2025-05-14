@@ -28,11 +28,14 @@ public final class LevelService implements LevelUseCase {
         final long exp = user.getExperience();
         int level = 1;
         long requiredExp = 100;
-        while(exp >= requiredExp){
+        long previousExp = 0;
+        while (exp >= requiredExp) {
             level++;
-            requiredExp *= 2;
+            previousExp = requiredExp;
+            requiredExp = (long) Math.floor(requiredExp * 1.2);
         }
-        final long currentExp = exp - requiredExp;
-        return new ExperienceResponse(level, currentExp);
+        final long currentExp = exp - previousExp;
+        requiredExp -= previousExp;
+        return new ExperienceResponse(level, currentExp, requiredExp);
     }
 }

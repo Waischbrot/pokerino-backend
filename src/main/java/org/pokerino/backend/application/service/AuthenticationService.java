@@ -45,9 +45,7 @@ public class AuthenticationService implements AuthenticationUseCase {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         // Todo: Catch FUCKING AuthenticationException because otherwise your apartment will burn down!
         // Todo: This is kind of bad -> requests user data again, login could be verified right here!
-        this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password())
-        ); // -> Maybe UserDetails / User object can be extracted from this?
+        this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), loginUserDto.password())); // -> Maybe UserDetails / User object can be extracted from this?
         return user;
     }
 
