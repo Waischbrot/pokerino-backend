@@ -32,7 +32,7 @@ public final class LevelService implements LevelUseCase {
         while (exp >= requiredExp) {
             level++;
             previousExp = requiredExp;
-            requiredExp = (long) Math.floor(requiredExp * 1.2);
+            requiredExp = (long) Math.floor(requiredExp * 1.2) + 100;
         }
         final long currentExp = exp - previousExp;
         requiredExp -= previousExp;
