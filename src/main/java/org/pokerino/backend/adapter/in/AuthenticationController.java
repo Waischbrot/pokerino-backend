@@ -65,36 +65,6 @@ public final class AuthenticationController {
     }
 
     /**
-     * Verify a user using the provided verification code.
-     * @param verificationCode Verification code for this user
-     * @return Status & message indicating success or failure
-     */
-    @PostMapping("/verify")
-    public ResponseEntity<?> verifyUser(@RequestParam String verificationCode) {
-        try {
-            this.authenticationUseCase.verifyUser(verificationCode);
-            return ResponseEntity.ok("Account verified successfully");
-        } catch (final Exception exception) {
-            return ResponseEntity.badRequest().body("User could not be verified");
-        }
-    }
-
-    /**
-     * Resend the verification code to the user.
-     * @param email Email of the user
-     * @return Status & message indicating success or failure
-     */
-    @PostMapping("/resend")
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
-        try {
-            this.authenticationUseCase.resendVerificationCode(email);
-            return ResponseEntity.ok("Verification code sent");
-        } catch (final Exception exception) {
-            return ResponseEntity.badRequest().body("Verification code could not be sent");
-        }
-    }
-
-    /**
      * Check if the given username is already taken.
      * @param username Username to check
      * @return True if the username is taken, false otherwise

@@ -9,9 +9,5 @@ public interface AuthenticationUseCase {
 
     User authenticate(LoginUserDto loginUserDto);
 
-    void verifyUser(String verificationCode);
-
-    void resendVerificationCode(String email);
-
     boolean isUsernameTaken(String username);
 }

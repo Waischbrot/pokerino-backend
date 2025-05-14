@@ -20,13 +20,5 @@ services:
     ports:
       - "6379:6379"
 
-  mailhog:
-    image: mailhog/mailhog
-    container_name: mailhog
-    ports:
-      - "1025:1025"  # SMTP port
-      - "8025:8025"  # Web UI port
-    platform: linux/amd64  # Specify the platform
-
 volumes:
   mariadb_data:
