@@ -5,10 +5,11 @@ After=network.target
 [Service]
 User=www-data
 WorkingDirectory=/opt/pokerino-backend
-ExecStart=/usr/bin/java -jar pokerinobackend.jar
+ExecStart=/usr/bin/java -Xmx2048m -Xms1024m -jar /opt/pokerino-backend/build/libs/pokerino-backend-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+
