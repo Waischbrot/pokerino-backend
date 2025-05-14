@@ -7,5 +7,5 @@ public record UserResponse(
         Date joinDate,
         long chips,
         int gold,
-        long experience
+        ExperienceResponse experience
 ) {}

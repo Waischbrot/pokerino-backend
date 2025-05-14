@@ -26,12 +26,12 @@ public final class AuthenticationController {
      * @return Status & message indicating success or failure
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<Boolean> signup(@RequestBody RegisterUserDto registerUserDto) {
         try {
             this.authenticationUseCase.signup(registerUserDto);
-            return ResponseEntity.ok("User registered successfully");
+            return ResponseEntity.ok(true);
         } catch (final Exception exception) {
-            return ResponseEntity.badRequest().body("User could not be registered");
+            return ResponseEntity.badRequest().body(false);
         }
     }
 

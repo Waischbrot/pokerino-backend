@@ -33,15 +33,4 @@ public class User {
         this.password = password;
         this.joinDate = new Date();
     }
-
-    @NonNull
-    public UserResponse toUserResponse() {
-        return new UserResponse(
-                this.username,
-                this.joinDate,
-                this.chips,
-                this.gold,
-                this.experience
-        );
-    }
 }
