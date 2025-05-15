@@ -26,6 +26,8 @@ public class UserController {
         return ResponseEntity.ok(userUseCase.getUser(username));
     }
 
+    // TODO: This is really stupid since User could just give himself experience!
+    // TODO: Just for purposes of testing, do not use productively
     @PostMapping("/addExperience")
     public ResponseEntity<AddExperienceResponse> addExperience(@RequestParam int experience) {
         return ResponseEntity.ok(userUseCase.addExperience(experience));
