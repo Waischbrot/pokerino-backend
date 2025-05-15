@@ -79,6 +79,7 @@ public class PokerGame implements Joinable {
         return true;
     }
 
+    @Override
     public boolean containsInQueue(long userId){
         for (GamePlayer userInQueue : this.usersInQueue) {
             if(userInQueue.getUserId() == userId){
