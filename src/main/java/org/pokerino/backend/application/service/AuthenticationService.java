@@ -1,13 +1,11 @@
 package org.pokerino.backend.application.service;
 
-import jakarta.annotation.Nonnull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.LoginUserDto;
 import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
-import org.pokerino.backend.application.port.in.SendMailUseCase;
 import org.pokerino.backend.application.port.out.LoadUserPort;
 import org.pokerino.backend.application.port.out.SaveUserPort;
 import org.pokerino.backend.domain.user.User;
@@ -15,9 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
