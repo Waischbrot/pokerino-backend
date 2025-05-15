@@ -1,10 +1,15 @@
 package org.pokerino.backend.domain.exception.game;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 
 public class GameNotFoundException extends GameException{
-    public GameNotFoundException(Long id) {
-        super("Game with id "+id+"isn't found");
+    public GameNotFoundException(UUID gameId) {
+        super("Game with id "+gameId+"isn't found");
+    }
+    public GameNotFoundException(String tableName){
+        super("Game with this table" + tableName + "isn't found");
     }
 
     @Override
