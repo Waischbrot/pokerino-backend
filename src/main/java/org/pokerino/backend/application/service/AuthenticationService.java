@@ -46,6 +46,6 @@ public class AuthenticationService implements AuthenticationUseCase {
 
     @Override
     public boolean isUsernameTaken(String username) {
-        return false;
+        return this.loadUserPort.findByUsername(username).isPresent();
     }
 }
