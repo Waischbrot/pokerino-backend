@@ -1,9 +1,11 @@
 package org.pokerino.backend.domain.user;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.adapter.in.response.UserResponse;
 
 import java.util.Date;
 
@@ -22,6 +24,7 @@ public class User {
     String email;
     @Column(nullable = false)
     String password;
+    @Column(nullable = false)
     Date joinDate;
     long chips;
     int gold;
@@ -31,6 +34,10 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    @PrePersist
+    public void prePersist() {
         this.joinDate = new Date();
     }
 }
