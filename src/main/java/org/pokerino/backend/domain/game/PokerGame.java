@@ -22,6 +22,7 @@ public class PokerGame implements Joinable {
     final Table table;
     final List<GamePlayer> participants; // All participants including those that lost
     final List<GamePlayer> players; // Players still actively playing the game
+    final List <GamePlayer> usersInQueue; // people in queue
     final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
     int dealer; // Keeps the index of where the dealer is located
     boolean started; // Is this game still queueing or has it already begun?
@@ -31,6 +32,7 @@ public class PokerGame implements Joinable {
         this.table = table;
         this.participants = new ArrayList<>();
         this.players = new ArrayList<>();
+        this.usersInQueue = new ArrayList<>();
         this.cardsOnTable = new String[5]; // Initialise array filled with null
         this.dealer = ThreadLocalRandom.current().nextInt(MAX_PLAYERS); // Pick a random dealer
     }
@@ -40,32 +42,51 @@ public class PokerGame implements Joinable {
         if (started) {
             throw new GameAlreadyStartedException("Game: '" + gameId + "' has already started! Failed adding user: '" + userId + "'.");
         }
-        if (contains(userId)) {
+        if (containsInGame(userId)) {
             throw new PlayerAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
         }
-        if (participants.size() >= MAX_PLAYERS) {
+        if (usersInQueue.size() >= MAX_PLAYERS) {
             throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
         }
         final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartingChips());
-        this.participants.add(ThreadLocalRandom.current().nextInt(this.participants.size() + 1), gamePlayer);
+        this.usersInQueue.add(gamePlayer);
     }
 
     @Override
     public void removePlayer(long userId) {
-        if (!contains(userId)) {
+        if (!containsInGame(userId)) {
             throw new PlayerNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
         }
         this.participants.removeIf(participant -> participant.getUserId() == userId);
     }
 
     @Override
-    public boolean contains(long userId) {
+    public void removePlayerFromQueue(long userId) {
+        if (!containsInQueue(userId)) {
+            throw new PlayerNotPresentException("User: '" + userId + "' is not part of queue of game: '" + gameId + "'! Failed removing.");
+        }
+        this.usersInQueue.removeIf(userInQueue -> userInQueue.getUserId() == userId);
+    }
+    
+
+    @Override
+    public boolean containsInGame(long userId) {
         for (GamePlayer participant : this.participants) {
             if (participant.getUserId() == userId) {
                 return true;
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean containsInQueue(long userId){
+        for (GamePlayer userInQueue : this.usersInQueue) {
+            if(userInQueue.getUserId() == userId){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -118,4 +139,5 @@ public class PokerGame implements Joinable {
             participant.setFolded(false);
         }
     }
+
 }
