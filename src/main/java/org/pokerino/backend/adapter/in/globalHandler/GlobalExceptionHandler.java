@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(GameException.class)
-    public ResponseEntity<ErrorResponseDto> handleGameNotFound(GameException ex) {
+    public ResponseEntity<ErrorResponseDto> handleGameExecption(GameException ex) {
         return ResponseEntity.status(ex.getStatus()).body(new ErrorResponseDto(ex.getMessage()));
     }
 
