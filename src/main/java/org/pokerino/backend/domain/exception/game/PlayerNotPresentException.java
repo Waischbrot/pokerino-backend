@@ -1,7 +1,12 @@
 package org.pokerino.backend.domain.exception.game;
 
-public final class PlayerNotPresentException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public final class PlayerNotPresentException extends GameException {
     public PlayerNotPresentException(String errorMessage) {
         super(errorMessage);
+    }
+    public HttpStatus getStatus(){
+        return HttpStatus.CONFLICT;
     }
 }

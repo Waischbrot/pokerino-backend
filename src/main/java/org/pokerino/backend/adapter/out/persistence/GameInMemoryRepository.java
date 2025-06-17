@@ -28,7 +28,7 @@ public class GameInMemoryRepository implements LoadGamePort, ManageGamePort {
     @Override
     public Optional<PokerGame> getGame(long userId) {
         for (final PokerGame game : this.games.values()) {
-            if (game.contains(userId)) {
+            if (game.containsInGame(userId)) {
                 return Optional.of(game);
             }
         }
