@@ -3,7 +3,7 @@ package org.pokerino.backend.adapter.in;
 import java.util.Map;
 import java.util.UUID;
 
-import org.pokerino.backend.adapter.in.dto.ApiResponse;
+import org.pokerino.backend.adapter.in.response.ApiResponse;
 import org.pokerino.backend.application.port.in.MatchMakingUseCase;
 import org.pokerino.backend.domain.game.PokerGame;
 import org.pokerino.backend.domain.game.Table;
