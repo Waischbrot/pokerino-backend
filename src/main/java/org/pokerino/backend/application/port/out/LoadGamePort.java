@@ -1,7 +1,6 @@
 package org.pokerino.backend.application.port.out;
 
 import org.pokerino.backend.domain.game.PokerGame;
-import org.pokerino.backend.domain.game.Table;
 
 import java.util.List;
 import java.util.Optional;

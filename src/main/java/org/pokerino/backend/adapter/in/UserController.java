@@ -3,11 +3,13 @@ package org.pokerino.backend.adapter.in;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.adapter.in.response.AddExperienceResponse;
 import org.pokerino.backend.adapter.in.response.UserResponse;
 import org.pokerino.backend.application.port.in.UserUseCase;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -24,12 +26,5 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<UserResponse> getUser(@RequestParam String username) {
         return ResponseEntity.ok(userUseCase.getUser(username));
-    }
-
-    // TODO: This is really stupid since User could just give himself experience!
-    // TODO: Just for purposes of testing, do not use productively
-    @PostMapping("/addExperience")
-    public ResponseEntity<AddExperienceResponse> addExperience(@RequestParam int experience) {
-        return ResponseEntity.ok(userUseCase.addExperience(experience));
     }
 }

@@ -9,8 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "users")
+@Entity(name = "user")
 @Getter @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor

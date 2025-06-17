@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class PokerGame implements Joinable {
     private static final int MAX_PLAYERS = 5;
     final UUID gameId;
-    final Table table;
+    final TableSpecification table;
     final List<GamePlayer> participants; // All participants including those that lost
     final List<GamePlayer> players; // Players still actively playing the game
     final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round

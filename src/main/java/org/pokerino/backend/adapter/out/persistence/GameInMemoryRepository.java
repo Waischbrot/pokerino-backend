@@ -3,7 +3,6 @@ package org.pokerino.backend.adapter.out.persistence;
 import org.pokerino.backend.application.port.out.LoadGamePort;
 import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.domain.game.PokerGame;
-import org.pokerino.backend.domain.game.Table;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
