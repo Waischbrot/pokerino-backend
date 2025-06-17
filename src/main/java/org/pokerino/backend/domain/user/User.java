@@ -26,7 +26,6 @@ public class User {
     @Column(nullable = false)
     Date joinDate;
     long chips;
-    int gold;
     long experience;
 
     public User(String username, String email, String password) {

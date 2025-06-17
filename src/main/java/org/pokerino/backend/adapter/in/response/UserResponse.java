@@ -6,6 +6,5 @@ public record UserResponse(
         String username,
         Date joinDate,
         long chips,
-        int gold,
         ExperienceResponse experience
 ) {}
