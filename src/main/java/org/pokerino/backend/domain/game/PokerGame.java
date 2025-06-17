@@ -18,7 +18,14 @@ import java.util.concurrent.ThreadLocalRandom;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PokerGame implements Joinable {
     private static final int MAX_PLAYERS = 5;
-    final UUID gameId;
+    final String gameCode;
+    final Privacy privacy;
+
+
+
+
+
+
     final TableSpecification table;
     final List<GamePlayer> participants; // All participants including those that lost
     final List<GamePlayer> players; // Players still actively playing the game
