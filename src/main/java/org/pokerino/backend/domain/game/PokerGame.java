@@ -17,9 +17,10 @@ import java.util.concurrent.ThreadLocalRandom;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PokerGame implements Joinable {
-    private static final int MAX_PLAYERS = 5;
+    
     final UUID gameId;
     final TableSpecification table;
+    final int maxPlayers;
     final List<GamePlayer> participants; // All participants including those that lost
     final List<GamePlayer> players; // Players still actively playing the game
     final List <GamePlayer> usersInQueue; // people in queue
@@ -31,11 +32,12 @@ public class PokerGame implements Joinable {
     public PokerGame(UUID uuid, TableSpecification table) {
         this.gameId = uuid;
         this.table = table;
+        this.maxPlayers = table.getMaxPlayers();
         this.participants = new ArrayList<>();
         this.players = new ArrayList<>();
         this.usersInQueue = new ArrayList<>();
         this.cardsOnTable = new String[5]; // Initialise array filled with null
-        this.dealer = ThreadLocalRandom.current().nextInt(MAX_PLAYERS); // Pick a random dealer
+        this.dealer = ThreadLocalRandom.current().nextInt(maxPlayers); // Pick a random dealer
     }
 
     @Override
@@ -46,7 +48,7 @@ public class PokerGame implements Joinable {
         if (containsInGame(userId)) {
             throw new PlayerAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
         }
-        if (usersInQueue.size() >= MAX_PLAYERS) {
+        if (usersInQueue.size() >= maxPlayers) {
             throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
         }
         final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartBalance());
@@ -97,7 +99,7 @@ public class PokerGame implements Joinable {
 
     @Override
     public int maxPlayers() {
-        return MAX_PLAYERS;
+        return maxPlayers;
     }
 
 
