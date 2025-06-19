@@ -2,8 +2,8 @@ package org.pokerino.backend.domain.exception.game;
 
 import org.springframework.http.HttpStatus;
 
-public final class PlayerAlreadyPresentException extends GameException {
-    public PlayerAlreadyPresentException(String errorMessage) {
+public final class WrongRaiseException extends GameException {
+    public WrongRaiseException(String errorMessage) {
         super(errorMessage);
     }
 

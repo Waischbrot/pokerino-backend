@@ -54,7 +54,6 @@ public final class AuthenticationController {
                     authenticatedUser.getUsername(),
                     authenticatedUser.getJoinDate(),
                     authenticatedUser.getChips(),
-                    authenticatedUser.getGold(),
                     experience
             );
             final LoginResponse loginResponse = new LoginResponse(jwtToken, userResponse);

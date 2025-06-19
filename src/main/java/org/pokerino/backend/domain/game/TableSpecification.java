@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.pokerino.backend.adapter.in.dto.HostGameRequestDto;
 import org.pokerino.backend.domain.exception.game.SmallBlindTooHighException;
 
-import jakarta.annotation.Generated;
+
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;

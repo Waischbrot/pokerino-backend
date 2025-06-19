@@ -3,10 +3,11 @@ package org.pokerino.backend.domain.game;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.domain.exception.game.GameAlreadyStartedException;
 import org.pokerino.backend.domain.exception.game.GameFullException;
-import org.pokerino.backend.domain.exception.game.PlayerAlreadyPresentException;
+import org.pokerino.backend.domain.exception.game.PlayerAlreadyLostException;
 import org.pokerino.backend.domain.exception.game.PlayerNotPresentException;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PokerGame implements Joinable {
     
@@ -28,6 +30,7 @@ public class PokerGame implements Joinable {
     int dealer; // Keeps the index of where the dealer is located
     boolean started; // Is this game still queueing or has it already begun?
     int currentTurnPlayer;
+    @Getter @Setter int lastRaise;
 
     public PokerGame(UUID uuid, TableSpecification table) {
         this.gameId = uuid;
@@ -46,13 +49,17 @@ public class PokerGame implements Joinable {
             throw new GameAlreadyStartedException("Game: '" + gameId + "' has already started! Failed adding user: '" + userId + "'.");
         }
         if (containsInGame(userId)) {
-            throw new PlayerAlreadyPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
+            throw new PlayerNotPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
         }
         if (usersInQueue.size() >= maxPlayers) {
             throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
         }
         final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartBalance());
         this.usersInQueue.add(gamePlayer);
+
+        // is it okay to add players from queue to participants and gameplayers in this way??
+        this.participants.add(gamePlayer);
+        this.players.add(gamePlayer);
     }
 
     @Override
@@ -70,6 +77,7 @@ public class PokerGame implements Joinable {
         }
         this.usersInQueue.removeIf(userInQueue -> userInQueue.getUserId() == userId);
     }
+    
     
 
     @Override
@@ -91,6 +99,17 @@ public class PokerGame implements Joinable {
         }
         return false;
     }
+
+    @Override
+    public boolean containsInRound(long userId){
+        for (GamePlayer player : this.players) {
+            if(player.getUserId() == userId){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public int currentPlayers() {
@@ -141,6 +160,33 @@ public class PokerGame implements Joinable {
             participant.setBet(0);
             participant.setFolded(false);
         }
+    }
+
+    public GamePlayer getPlayer(long playerId){
+        for (GamePlayer player : players) {
+            if(playerId == player.getUserId()) return player;
+        }
+        throw new PlayerNotPresentException("There is no player with id " + playerId);
+    }
+
+    public int getCurrentMaxBet(){
+        int maxBet=0;
+        for (GamePlayer player : players) {
+            if(player.getBet()>maxBet) maxBet = player.getBet(); 
+        }
+        return maxBet;
+    }
+
+    @Override
+    public void removePlayerFromRound(long userId) {
+        if (!containsInGame(userId)) {
+            throw new PlayerNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
+        }
+        else if (!containsInRound(userId)) {
+            throw new PlayerAlreadyLostException("Player " + userId + " have already lost ");
+        }
+
+        this.players.removeIf(participant -> participant.getUserId() == userId);
     }
 
 }
