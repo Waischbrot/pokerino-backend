@@ -40,16 +40,18 @@ public class GameInMemoryRepository implements LoadGamePort, ManageGamePort {
         return this.games.containsKey(gameId);
     }
 
-    @Override
-    public List<PokerGame> getGamesByTable(Table table) {
-        final List<PokerGame> games = new ArrayList<>();
-        for (final PokerGame game : this.games.values()) {
-            if (game.getTable() == table) {
-                games.add(game);
-            }
-        }
-        return games;
-    }
+    // not needed anymore?? because there are no table types know
+
+    // @Override
+    // public List<PokerGame> getGamesByTable(Table table) {
+    //     final List<PokerGame> games = new ArrayList<>();
+    //     for (final PokerGame game : this.games.values()) {
+    //         if (game.getTable() == table) {
+    //             games.add(game);
+    //         }
+    //     }
+    //     return games;
+    // }
 
     @Override
     public void saveGame(PokerGame pokerGame) {

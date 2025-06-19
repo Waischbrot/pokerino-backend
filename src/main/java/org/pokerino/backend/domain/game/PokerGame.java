@@ -26,8 +26,9 @@ public class PokerGame implements Joinable {
     final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
     int dealer; // Keeps the index of where the dealer is located
     boolean started; // Is this game still queueing or has it already begun?
+    int currentTurnPlayer;
 
-    public PokerGame(UUID uuid, Table table) {
+    public PokerGame(UUID uuid, TableSpecification table) {
         this.gameId = uuid;
         this.table = table;
         this.participants = new ArrayList<>();
@@ -48,7 +49,7 @@ public class PokerGame implements Joinable {
         if (usersInQueue.size() >= MAX_PLAYERS) {
             throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
         }
-        final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartingChips());
+        final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartBalance());
         this.usersInQueue.add(gamePlayer);
     }
 
