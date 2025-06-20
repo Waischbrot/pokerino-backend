@@ -41,4 +41,13 @@ public class GamePlayer {
         }
         this.hand = hand;
     }
+
+    public boolean bet(int numberOfChips){
+        if(numberOfChips>total){
+            return false;
+        }
+        total-=numberOfChips;
+        bet+=numberOfChips;
+        return true;
+    }
 }
