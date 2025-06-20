@@ -1,4 +1,4 @@
-package org.pokerino.backend.domain.rank;
+package org.pokerino.backend.domain.cards.rank;
 
 import java.util.Arrays;
 

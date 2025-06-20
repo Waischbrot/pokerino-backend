@@ -1,4 +1,4 @@
-package org.pokerino.backend.domain.rank.algorithms;
+package org.pokerino.backend.domain.cards.rank.algorithms;
 
 public final class ThreeOfKindChecker {
     /**

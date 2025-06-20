@@ -1,4 +1,4 @@
-package org.pokerino.backend.domain.rank.algorithms;
+package org.pokerino.backend.domain.cards.rank.algorithms;
 
 public final class FourOfAKindChecker {
     private static final char[] VALUES = { '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A' };
