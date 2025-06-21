@@ -7,12 +7,11 @@ import lombok.experimental.FieldDefaults;
 import java.util.Map;
 import java.util.UUID;
 
-import org.pokerino.backend.adapter.in.dto.HostGameRequestDto;
 import org.pokerino.backend.adapter.in.response.ApiResponse;
 import org.pokerino.backend.adapter.out.persistence.GameInMemoryRepository;
 import org.pokerino.backend.application.port.in.MatchMakingUseCase;
 import org.pokerino.backend.domain.game.PokerGame;
-import org.pokerino.backend.domain.game.TableSpecification;
+import org.pokerino.backend.domain.game.TableOptions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +24,35 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class TableController {
 
+    // Join table -> just send me the code, return is either error or a GameResponse
+
+    // Host table -> Send me all important info, return is either error or a GameResponse
+
+    // Leave table -> No input needed -> returns error if not in a table
+
+    // Current table -> Returns a GameResponse if the user is currently playing, should include available actions if its the players turn!
+
+    // Current table / Available actions -> Returns a list of available actions for the current player if its their turn
+
+    // public tables -> Returns a list of public tables available to join with simple info about them
+
+
+
+
+
     MatchMakingUseCase mmUsecase;
     GameInMemoryRepository gameInMemoryRepository;
+
+
+
+
+
+
 
     // POST /host (Hosts a new table, ?? just possible if you are not already in a table ?? )
     @PostMapping("/host")
     public ApiResponse host(@RequestParam UUID gameId,@RequestParam HostGameRequestDto gameType,@RequestParam long userId){
-        PokerGame game = new PokerGame(gameId, new TableSpecification(gameType));
+        PokerGame game = new PokerGame(gameId, new TableOptions(gameType));
         gameInMemoryRepository.saveGame(game);
         mmUsecase.addPlayer(gameId, userId);
         return new ApiResponse("Player has hosted game successfully");

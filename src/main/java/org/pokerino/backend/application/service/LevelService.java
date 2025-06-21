@@ -1,6 +1,5 @@
 package org.pokerino.backend.application.service;
 
-import org.pokerino.backend.adapter.in.response.AddExperienceResponse;
 import org.pokerino.backend.adapter.in.response.ExperienceResponse;
 import org.pokerino.backend.application.port.in.LevelUseCase;
 import org.pokerino.backend.domain.user.User;
@@ -12,7 +11,7 @@ import java.util.List;
 @Service
 public final class LevelService implements LevelUseCase {
     @Override
-    public AddExperienceResponse addExperience(User user, long exp) {
+    public List<Integer> addExperience(User user, long exp) {
         int oldLevel = calculateLevel(user).level();
         user.setExperience(user.getExperience() + exp);
         ExperienceResponse newExp = calculateLevel(user);
@@ -20,7 +19,7 @@ public final class LevelService implements LevelUseCase {
         for (int i = oldLevel; i < newExp.level(); i++) {
             levelUps.add(i + 1);
         }
-        return new AddExperienceResponse(newExp, levelUps);
+        return levelUps;
     }
 
     @Override

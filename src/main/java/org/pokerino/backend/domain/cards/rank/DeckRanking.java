@@ -1,5 +1,7 @@
 package org.pokerino.backend.domain.cards.rank;
 
+import lombok.NonNull;
+
 import java.util.Arrays;
 
 public record DeckRanking(int... indexes) {
@@ -30,6 +32,7 @@ public record DeckRanking(int... indexes) {
      * @return String representation
      */
     @Override
+    @NonNull
     public String toString() {
         return "DeckRanking{" +
                 "indexes=" + Arrays.toString(indexes) +

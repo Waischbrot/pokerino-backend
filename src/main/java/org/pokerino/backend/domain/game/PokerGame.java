@@ -3,138 +3,82 @@ package org.pokerino.backend.domain.game;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.domain.exception.game.GameAlreadyStartedException;
-import org.pokerino.backend.domain.exception.game.GameFullException;
-import org.pokerino.backend.domain.exception.game.PlayerAlreadyLostException;
-import org.pokerino.backend.domain.exception.game.PlayerNotPresentException;
+import org.pokerino.backend.domain.outbound.exception.BadRequestException;
+import org.pokerino.backend.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
-@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PokerGame implements Joinable {
-    
-    final UUID gameId;
-    final TableSpecification table;
-    final int maxPlayers;
+public final class PokerGame {
+    final String gameCode;
+    final TableOptions options;
+    GameState state;
     final List<GamePlayer> participants; // All participants including those that lost
-    final List<GamePlayer> players; // Players still actively playing the game
-    final List <GamePlayer> usersInQueue; // people in queue
-    final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
     int dealer; // Keeps the index of where the dealer is located
-    boolean started; // Is this game still queueing or has it already begun?
-    int currentTurnPlayer;
-    @Getter @Setter int lastRaise;
+    final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
 
-    public PokerGame(UUID uuid, TableSpecification table) {
-        this.gameId = uuid;
-        this.table = table;
-        this.maxPlayers = table.getMaxPlayers();
+    public PokerGame(String gameCode, TableOptions options) {
+        this.gameCode = gameCode;
+        this.options = options;
+        this.state = GameState.WAITING_FOR_PLAYERS;
         this.participants = new ArrayList<>();
-        this.players = new ArrayList<>();
-        this.usersInQueue = new ArrayList<>();
+        this.dealer = ThreadLocalRandom.current().nextInt(options.getMaxPlayers()); // Pick a random dealer
         this.cardsOnTable = new String[5]; // Initialise array filled with null
-        this.dealer = ThreadLocalRandom.current().nextInt(maxPlayers); // Pick a random dealer
     }
 
-    @Override
-    public void addPlayer(long userId) {
-        if (started) {
-            throw new GameAlreadyStartedException("Game: '" + gameId + "' has already started! Failed adding user: '" + userId + "'.");
+    // Adds a player to the game, but at this point his chips were already deducted
+    public void addPlayer(User user) {
+        if (state != GameState.WAITING_FOR_PLAYERS) {
+            throw new BadRequestException("Game: '" + gameCode + "' is not in a state to add players!");
         }
-        if (containsInGame(userId)) {
-            throw new PlayerNotPresentException("User: '" + userId + "' is already part of game: '" + gameId + "'! Failed re-adding.");
+        if (playerCount() >= options.getMaxPlayers()) {
+            throw new BadRequestException("Game: '" + gameCode + "' is full!");
         }
-        if (usersInQueue.size() >= maxPlayers) {
-            throw new GameFullException("Game: '" + gameId + "' is full! Failed adding user: '" + userId + "'.");
+        if (isParticipant(user.getUsername())) {
+            throw new BadRequestException("Player is already part of game: '" + gameCode + "'.");
         }
-        final GamePlayer gamePlayer = new GamePlayer(userId, table.getStartBalance());
-        this.usersInQueue.add(gamePlayer);
-
-        // is it okay to add players from queue to participants and gameplayers in this way??
+        final GamePlayer gamePlayer = new GamePlayer(user.getUsername(), options.getStartBalance());
         this.participants.add(gamePlayer);
-        this.players.add(gamePlayer);
     }
 
-    @Override
-    public void removePlayer(long userId) {
-        if (!containsInGame(userId)) {
-            throw new PlayerNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
-        }
-        this.participants.removeIf(participant -> participant.getUserId() == userId);
-    }
-
-    @Override
-    public void removePlayerFromQueue(long userId) {
-        if (!containsInQueue(userId)) {
-            throw new PlayerNotPresentException("User: '" + userId + "' is not part of queue of game: '" + gameId + "'! Failed removing.");
-        }
-        this.usersInQueue.removeIf(userInQueue -> userInQueue.getUserId() == userId);
-    }
-    
-    
-
-    @Override
-    public boolean containsInGame(long userId) {
-        for (GamePlayer participant : this.participants) {
-            if (participant.getUserId() == userId) {
-                return true;
+    public void removePlayer(User user) {
+        for (final GamePlayer participant : participants) {
+            if (participant.getUsername().equals(user.getUsername())) {
+                this.participants.remove(participant);
+                return;
             }
         }
-        return true;
+        throw new BadRequestException("Player is not part of game: '" + gameCode + "'.");
     }
 
-    @Override
-    public boolean containsInQueue(long userId){
-        for (GamePlayer userInQueue : this.usersInQueue) {
-            if(userInQueue.getUserId() == userId){
-                return true;
-            }
-        }
-        return false;
+    public boolean isParticipant(String username) {
+        return participants.stream()
+                .anyMatch(participant ->
+                        participant.getUsername().equals(username)
+                );
     }
 
-    @Override
-    public boolean containsInRound(long userId){
-        for (GamePlayer player : this.players) {
-            if(player.getUserId() == userId){
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    @Override
-    public int currentPlayers() {
+    public int playerCount() {
         return this.participants.size();
     }
 
-    @Override
-    public int maxPlayers() {
-        return maxPlayers;
-    }
-
-
     @NonNull
     public GamePlayer getDealer() {
-        return this.players.get(this.dealer);
+        return this.participants.get(this.dealer);
     }
 
     @NonNull
     public GamePlayer getSmallBlind() {
-        return this.players.get((this.dealer + 1) % this.players.size());
+        return this.participants.get((this.dealer + 1) % playerCount());
     }
 
     @NonNull
     public GamePlayer getBigBlind() {
-        return this.players.get((this.dealer + 2) % this.players.size());
+        return this.participants.get((this.dealer + 2) % playerCount());
     }
 
     @NonNull
@@ -146,7 +90,7 @@ public class PokerGame implements Joinable {
     }
 
     public void moveDealer() {
-        this.dealer = (this.dealer + 1) % this.players.size();
+        this.dealer = (this.dealer + 1) % playerCount();
     }
 
     public void resetCards() {
@@ -159,34 +103,7 @@ public class PokerGame implements Joinable {
         for (GamePlayer participant : this.participants) {
             participant.setBet(0);
             participant.setFolded(false);
+            participant.setHand(null, null);
         }
     }
-
-    public GamePlayer getPlayer(long playerId){
-        for (GamePlayer player : players) {
-            if(playerId == player.getUserId()) return player;
-        }
-        throw new PlayerNotPresentException("There is no player with id " + playerId);
-    }
-
-    public int getCurrentMaxBet(){
-        int maxBet=0;
-        for (GamePlayer player : players) {
-            if(player.getBet()>maxBet) maxBet = player.getBet(); 
-        }
-        return maxBet;
-    }
-
-    @Override
-    public void removePlayerFromRound(long userId) {
-        if (!containsInGame(userId)) {
-            throw new PlayerNotPresentException("User: '" + userId + "' is not part of game: '" + gameId + "'! Failed removing.");
-        }
-        else if (!containsInRound(userId)) {
-            throw new PlayerAlreadyLostException("Player " + userId + " have already lost ");
-        }
-
-        this.players.removeIf(participant -> participant.getUserId() == userId);
-    }
-
 }

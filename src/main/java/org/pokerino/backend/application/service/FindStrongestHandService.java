@@ -7,7 +7,7 @@ import org.pokerino.backend.application.port.in.DeckRankingUseCase;
 import org.pokerino.backend.application.port.in.FindStrongestHandUseCase;
 import org.pokerino.backend.domain.game.GamePlayer;
 import org.pokerino.backend.domain.game.PokerGame;
-import org.pokerino.backend.domain.rank.DeckRanking;
+import org.pokerino.backend.domain.cards.rank.DeckRanking;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,8 +23,20 @@ public class FindStrongestHandService implements FindStrongestHandUseCase {
     public List<GamePlayer> findStrongestHands(final PokerGame game) {
         final List<GamePlayer> winners = new ArrayList<>();
         DeckRanking bestRanking = null;
-        for (final GamePlayer player : game.getPlayers()) {
-            final DeckRanking ranking = this.deckRankingUseCase.evaluateHand(player.getHand());
+        for (final GamePlayer player : game.getParticipants()) {
+
+            // Skip dead players
+            if (player.isDead()) {
+                continue;
+            }
+
+            // Ensure the hand is valid and contains two cards
+            final String[] hand = player.getHand();
+            if (hand[0] == null || hand[1] == null) {
+                continue; // Skip players without a valid hand
+            }
+
+            final DeckRanking ranking = this.deckRankingUseCase.evaluateHand(hand);
             final int evaluation = ranking.playAgainst(bestRanking);
             if (bestRanking == null || evaluation > 0) { // Is the new best ranking
                 bestRanking = ranking;

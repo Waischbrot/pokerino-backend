@@ -1,4 +1,4 @@
-package org.pokerino.backend.adapter.in;
+package org.pokerino.backend.adapter.in.error;
 
 import org.pokerino.backend.adapter.in.response.ErrorResponse;
 import org.pokerino.backend.domain.outbound.exception.OutboundException;

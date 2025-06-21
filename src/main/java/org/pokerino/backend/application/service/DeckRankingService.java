@@ -1,8 +1,8 @@
 package org.pokerino.backend.application.service;
 
 import org.pokerino.backend.application.port.in.DeckRankingUseCase;
-import org.pokerino.backend.domain.rank.DeckRanking;
-import org.pokerino.backend.domain.rank.algorithms.*;
+import org.pokerino.backend.domain.cards.rank.DeckRanking;
+import org.pokerino.backend.domain.cards.rank.algorithms.*;
 import org.springframework.stereotype.Service;
 
 @Service

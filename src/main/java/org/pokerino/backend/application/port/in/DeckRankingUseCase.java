@@ -1,6 +1,6 @@
 package org.pokerino.backend.application.port.in;
 
-import org.pokerino.backend.domain.rank.DeckRanking;
+import org.pokerino.backend.domain.cards.rank.DeckRanking;
 
 public interface DeckRankingUseCase {
     /**
