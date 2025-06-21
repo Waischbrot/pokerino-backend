@@ -8,6 +8,7 @@ import org.pokerino.backend.adapter.in.dto.RegisterUserDto;
 import org.pokerino.backend.application.port.in.AuthenticationUseCase;
 import org.pokerino.backend.application.port.out.LoadUserPort;
 import org.pokerino.backend.application.port.out.SaveUserPort;
+import org.pokerino.backend.domain.outbound.exception.InternalServerErrorException;
 import org.pokerino.backend.domain.user.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,11 +24,14 @@ public class AuthenticationService implements AuthenticationUseCase {
     LoadUserPort loadUserPort;
     SaveUserPort saveUserPort;
 
-    // Todo: Check if there is already a User with this Mail (Or test -> the user with email x might not even be created, since db has unique field)
-    // Todo: Filter against email domain blacklist for antibot protection
-    // Todo: Check if there is already a User with this Username (Or test as described above)
     @Override
     public void signup(RegisterUserDto registerUserDto) {
+        if (this.loadUserPort.findByEmail(registerUserDto.email()).isPresent()) {
+            throw new InternalServerErrorException("Email already taken");
+        }
+        if (isUsernameTaken(registerUserDto.username())) {
+            throw new InternalServerErrorException("Username already taken");
+        }
         final String encodedPassword = this.passwordEncoder.encode(registerUserDto.password());
         final User user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
         this.saveUserPort.saveUser(user);
@@ -37,10 +41,14 @@ public class AuthenticationService implements AuthenticationUseCase {
     @Override
     public User authenticate(LoginUserDto loginUserDto) {
         final User user = this.loadUserPort.findByEmail(loginUserDto.email())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        // Todo: Catch FUCKING AuthenticationException because otherwise your apartment will burn down!
-        // Todo: This is kind of bad -> requests user data again, login could be verified right here!
-        this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), loginUserDto.password())); // -> Maybe UserDetails / User object can be extracted from this?
+                .orElseThrow(() -> new InternalServerErrorException("User not found"));
+        try {
+            this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), loginUserDto.password())
+            );
+        } catch (final Exception exception) {
+            throw new InternalServerErrorException("Authentication failed!");
+        }
         return user;
     }
 
