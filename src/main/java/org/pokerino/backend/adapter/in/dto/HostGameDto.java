@@ -1,11 +1,10 @@
 package org.pokerino.backend.adapter.in.dto;
 
-public record HostGameRequestDto(
+public record HostGameDto(
     String tableName,
     int maxPlayers,
     int turnTime,
-    int startBalance,
-    int smallBlind,
+    long startBalance,
+    long smallBlind,
     boolean increasingBlind
-)
-{}
+) {}
