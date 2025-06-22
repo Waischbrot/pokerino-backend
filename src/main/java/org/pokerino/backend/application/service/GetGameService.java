@@ -91,19 +91,17 @@ public final class GetGameService implements GetGameUseCase {
 
     @NonNull
     private List<Action> calculateAvailable(PokerGame pokerGame, GamePlayer player) {
-        if (player.isDead() || player.isFolded()) {
-            return List.of(); // No actions available if player is dead or folded
-        }
-        if (player.isAllIn()) {
-            return List.of(); // No actions if already all in
+        if (player.isDead() || player.isFolded() || player.isAllIn()) {
+            return List.of(); // No actions available if player is dead, folded, or all in
         }
 
         List<Action> available = new ArrayList<>();
-        long currentBet = pokerGame.getCurrentBet(); // The highest bet at the table
+        long currentBet = pokerGame.getCurrentBet();
         long toCall = currentBet - player.getBet();
+        long minRaise = pokerGame.getMinRaise();
 
         // FOLD is always available if there is a bet to call
-        if (toCall > 0 && player.getChips() > 0) {
+        if (toCall > 0) { // Don't check chips here as player would be all in
             available.add(Action.FOLD);
         }
 
@@ -112,18 +110,21 @@ public final class GetGameService implements GetGameUseCase {
             available.add(Action.CHECK);
         }
 
-        // CALL is available if there is a bet to call and player has enough chips (or can go all in to call)
-        if (toCall > 0 && player.getChips() > 0) {
+        // CALL is available if player can fully match the bet without going all in
+        if (toCall > 0 && player.getChips() > toCall) {
             available.add(Action.CALL);
         }
 
-        // RAISE is available if player has enough chips to raise (i.e., more than just calling)
-        long minRaise = pokerGame.getMinRaise(); // Minimum raise amount, e.g., big blind or last raise
-        if (player.getChips() > toCall && player.getChips() > minRaise) {
+        // RAISE is available if player can call and then raise at least minRaise more
+        if (toCall == 0 && player.getChips() >= minRaise) {
+            // If no call is needed, but player can raise at least minRaise
+            available.add(Action.RAISE);
+        } else if (toCall > 0 && player.getChips() > toCall + minRaise) {
+            // If call is needed, and player can call and raise at least minRaise more
             available.add(Action.RAISE);
         }
 
-        // ALL_IN is always available if player has chips
+        // ALL_IN is always available if player has chips (and is not already all in)
         available.add(Action.ALL_IN);
 
         return available;
