@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GamePlayer {
     final String username;
+    boolean host; // Is this player the host of the game?
     long chips; // How many chips does this player have left
     long bet; // How much of his chips are currently in the pot
     String[] hand; // The hand of the player, should only contain 2 cards.
