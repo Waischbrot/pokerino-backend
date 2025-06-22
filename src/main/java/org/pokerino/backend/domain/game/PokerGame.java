@@ -17,9 +17,12 @@ public final class PokerGame {
     final String gameCode;
     final TableOptions options;
     GameState state;
+    long totalChips; // All chips involved -> Used to pay out winnings at the end of the game
     final List<GamePlayer> participants; // All participants including those that lost
     int dealer; // Keeps the index of where the dealer is located
     final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
+    int current; // The index of the current player, used to determine whose turn it is
+    long minRaise; // The minimum raise that can be made by the players
 
     public PokerGame(String gameCode, TableOptions options) {
         this.gameCode = gameCode;
@@ -62,8 +65,31 @@ public final class PokerGame {
                 );
     }
 
+    @NonNull
+    public GamePlayer getPlayer(String username) {
+        return participants.stream()
+                .filter(participant -> participant.getUsername().equals(username))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("Player is not part of game: '" + gameCode + "'."));
+    }
+
     public int playerCount() {
         return this.participants.size();
+    }
+
+    public long getCurrentBet() {
+        long highestBet = 0;
+        for (GamePlayer participant : this.participants) {
+            if (participant.getBet() > highestBet) {
+                highestBet = participant.getBet();
+            }
+        }
+        return highestBet;
+    }
+
+    @NonNull
+    public GamePlayer getCurrent() {
+        return this.participants.get(this.current);
     }
 
     @NonNull
