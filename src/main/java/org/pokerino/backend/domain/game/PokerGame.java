@@ -35,15 +35,7 @@ public final class PokerGame {
 
     // Adds a player to the game, but at this point his chips were already deducted
     public void addPlayer(User user) {
-        if (state != GameState.WAITING_FOR_PLAYERS) {
-            throw new BadRequestException("Game: '" + gameCode + "' is not in a state to add players!");
-        }
-        if (playerCount() >= options.getMaxPlayers()) {
-            throw new BadRequestException("Game: '" + gameCode + "' is full!");
-        }
-        if (isParticipant(user.getUsername())) {
-            throw new BadRequestException("Player is already part of game: '" + gameCode + "'.");
-        }
+        this.totalChips += options.getStartBalance(); // Add the chips to the total pool
         final GamePlayer gamePlayer = new GamePlayer(user.getUsername(), options.getStartBalance());
         this.participants.add(gamePlayer);
     }
@@ -51,6 +43,9 @@ public final class PokerGame {
     public void removePlayer(String username) {
         for (final GamePlayer participant : participants) {
             if (participant.getUsername().equals(username)) {
+                if (state == GameState.WAITING_FOR_PLAYERS) {
+                    this.totalChips -= options.getStartBalance(); // Remove the chips from the total pool
+                }
                 this.participants.remove(participant);
                 return;
             }

@@ -15,6 +15,7 @@ import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.application.port.out.SaveUserPort;
 import org.pokerino.backend.domain.game.GameState;
 import org.pokerino.backend.domain.game.PokerGame;
+import org.pokerino.backend.domain.game.TableOptions;
 import org.pokerino.backend.domain.outbound.exception.BadRequestException;
 import org.pokerino.backend.domain.user.User;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,8 +35,43 @@ public final class TableService implements TableUseCase {
 
     @Override
     public GameResponse host(HostGameDto hostGameDto) {
-        return null;
-        // TODO: Check if the player has an active game in which he is NOT dead.
+        // Check the old game of the user, if it exists and is not dead.
+        final String username = getUsername();
+        final Optional<PokerGame> userGame = loadGamePort.getUserGame(username);
+        userGame.ifPresent(game -> {
+            if (!game.getPlayer(username).isDead()) {
+                throw new BadRequestException("You are already in a game and not dead yet!");
+            }
+        });
+
+        // Validate the game options.
+        final TableOptions options = TableOptions.fromRequest(hostGameDto);
+
+        // Create a new game with the given options.
+        final PokerGame pokerGame = new PokerGame(manageGamePort.generateGameCode(), options);
+
+        // Load the new user and check if he has enough chips -> deduct them.
+        final User user = loadUserPort.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException("User not found: " + username));
+        if (user.getChips() < options.getStartBalance()) {
+            throw new BadRequestException("User: '" + username + "' does not have enough chips to host this game!");
+        }
+        user.setChips(user.getChips() - options.getStartBalance());
+        saveUserPort.saveUser(user);
+
+        // Persist the new game.
+        manageGamePort.saveGame(pokerGame);
+
+        // Remove user from old game if it exists
+        userGame.ifPresent(game -> {
+            game.removePlayer(username);
+        });
+
+        // Add the player to the new game
+        pokerGame.addPlayer(user);
+
+        // Return the game response
+        return getGameUseCase.toResponse(pokerGame, username);
     }
 
     @Override
