@@ -53,9 +53,7 @@ public final class GetGameService implements GetGameUseCase {
                         participant.isDead()
                 ))
                 .toList();
-        final List<String> cardsOnTable = pokerGame.getCardsOnTable()[0] == null
-                ? null // If the first card is null, then no cards have been dealt yet
-                : List.of(pokerGame.getCardsOnTable()); // Otherwise return the cards on the table
+        final List<String> cardsOnTable = List.of(pokerGame.getCardsOnTable());
         String currentPlayer = null;
         ActionsResponse actions = null;
         if (gameState == GameState.IN_ROUND) {

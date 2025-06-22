@@ -10,6 +10,7 @@ public record GameResponse(
         TableOptionsResponse tableOptions,
         PlayerResponse player, // The player who is currently viewing the game
         List<OpponentResponse> opponents, // Can be empty if no opponents are present yet or if game is over
+        List<String> cardsOnTable, // Cards in the middle, null if not dealt yet
         String currentPlayer, // Username of the player whose turn it is else null
         ActionsResponse actions // Can be null if not the player's turn
 ) {}
