@@ -24,22 +24,12 @@ public final class AuthenticationController {
     AuthenticationUseCase authenticationUseCase;
     LevelUseCase levelUseCase;
 
-    /**
-     * Sign up a new user using the provided credentials.
-     * @param registerUserDto Email, Password, Username for this user
-     * @return Status & message indicating success or failure
-     */
     @PostMapping("/signup")
     public ResponseEntity<Boolean> signup(@RequestBody RegisterUserDto registerUserDto) {
         this.authenticationUseCase.signup(registerUserDto);
         return ResponseEntity.ok(true);
     }
 
-    /**
-     * Authenticate a user using the provided credentials.
-     * @param loginUserDto Email, Password for this user
-     * @return Username and Password for user
-     */
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
         final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
@@ -55,11 +45,6 @@ public final class AuthenticationController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    /**
-     * Check if the given username is already taken.
-     * @param username Username to check
-     * @return True if the username is taken, false otherwise
-     */
     @GetMapping("/username")
     public ResponseEntity<Boolean> username(@RequestParam String username) {
         return ResponseEntity.ok(this.authenticationUseCase.isUsernameTaken(username));
