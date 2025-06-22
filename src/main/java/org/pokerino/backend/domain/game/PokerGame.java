@@ -48,9 +48,9 @@ public final class PokerGame {
         this.participants.add(gamePlayer);
     }
 
-    public void removePlayer(User user) {
+    public void removePlayer(String username) {
         for (final GamePlayer participant : participants) {
-            if (participant.getUsername().equals(user.getUsername())) {
+            if (participant.getUsername().equals(username)) {
                 this.participants.remove(participant);
                 return;
             }
