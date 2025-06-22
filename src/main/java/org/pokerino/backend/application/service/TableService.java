@@ -122,19 +122,52 @@ public final class TableService implements TableUseCase {
 
     @Override
     public void leave() {
+        // Check for and find the users existing game.
         final String username = getUsername();
         final PokerGame pokerGame = loadGamePort.getUserGame(username)
                 .orElseThrow(() -> new BadRequestException("No game found for user: " + username));
-        // TODO: Find if it is this users turn. If it is, then skip and notify the Websocket.
-        // TODO: Set the player to dead next up. He can start another game anytime if that is done.
+
+        if (pokerGame.getState() == GameState.WAITING_FOR_PLAYERS) {
+            // Remove the player from the game.
+            pokerGame.removePlayer(username);
+
+            // Find user and return the chips.
+            final User user = loadUserPort.findByUsername(username)
+                    .orElseThrow(() -> new BadRequestException("User not found: " + username));
+            user.setChips(user.getChips() + pokerGame.getOptions().getStartBalance());
+            saveUserPort.saveUser(user);
+
+            // Check if the game is empty and delete it if so.
+            if (pokerGame.playerCount() == 0) {
+                manageGamePort.removeGame(pokerGame.getGameCode());
+            } else {
+                // TODO: Notify the Websocket that the player left the game.
+            }
+            return;
+        }
+
+        // Check if its the turn of this user -> if so, skip the turn and notify the Websocket.
+        if (pokerGame.getCurrent().getUsername().equals(username)) {
+
+            // TODO: Skip his turn using FOLD and notify the Websocket about it.
+
+        }
+
+        // TODO: Notify the Websocket that the user left the game.
+
+        // TODO: Handle other logic like setting the player to be dead.
 
         // TODO: All his chips just stay in the game, his pot stays as well. In the end the winner will get them like everyone elses.
 
-        // TODO: If still queuing, completely remove the player from the game and pay back the chips.
 
-        // TODO: If the game is already over, then handle it accordingly - no extra punishment.
 
-        // TODO: If all players leave, then delete the game.
+        // TODO: Instead of this, check how many players are still left alive (aliveCount). Since no one is explicitly removed, this does nothing.
+        final int count = pokerGame.playerCount();
+        if (count == 1) {
+            // Last player won, handle and then delete the game.
+        } else if (count == 0) {
+            manageGamePort.removeGame(pokerGame.getGameCode());
+        }
     }
 
     @Override
