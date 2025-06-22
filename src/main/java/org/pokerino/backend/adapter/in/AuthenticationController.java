@@ -31,12 +31,8 @@ public final class AuthenticationController {
      */
     @PostMapping("/signup")
     public ResponseEntity<Boolean> signup(@RequestBody RegisterUserDto registerUserDto) {
-        try {
-            this.authenticationUseCase.signup(registerUserDto);
-            return ResponseEntity.ok(true);
-        } catch (final Exception exception) {
-            return ResponseEntity.badRequest().body(false);
-        }
+        this.authenticationUseCase.signup(registerUserDto);
+        return ResponseEntity.ok(true);
     }
 
     /**
@@ -46,21 +42,17 @@ public final class AuthenticationController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        try {
-            final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
-            final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
-            final ExperienceResponse experience = levelUseCase.calculateLevel(authenticatedUser);
-            final UserResponse userResponse = new UserResponse(
-                    authenticatedUser.getUsername(),
-                    authenticatedUser.getJoinDate(),
-                    authenticatedUser.getChips(),
-                    experience
-            );
-            final LoginResponse loginResponse = new LoginResponse(jwtToken, userResponse);
-            return ResponseEntity.ok(loginResponse);
-        } catch (final Exception exception) {
-            return ResponseEntity.badRequest().body("User could not be logged in");
-        }
+        final User authenticatedUser = this.authenticationUseCase.authenticate(loginUserDto);
+        final String jwtToken = this.jwtUseCase.generateToken(authenticatedUser);
+        final ExperienceResponse experience = levelUseCase.calculateLevel(authenticatedUser);
+        final UserResponse userResponse = new UserResponse(
+                authenticatedUser.getUsername(),
+                authenticatedUser.getJoinDate(),
+                authenticatedUser.getChips(),
+                experience
+        );
+        final LoginResponse loginResponse = new LoginResponse(jwtToken, userResponse);
+        return ResponseEntity.ok(loginResponse);
     }
 
     /**
