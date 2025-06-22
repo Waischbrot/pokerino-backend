@@ -1,4 +1,4 @@
-package org.pokerino.backend.adapter.in.response;
+package org.pokerino.backend.adapter.in.response.game;
 
 import org.pokerino.backend.domain.game.Action;
 
