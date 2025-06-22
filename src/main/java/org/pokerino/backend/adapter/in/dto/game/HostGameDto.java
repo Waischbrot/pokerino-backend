@@ -1,4 +1,4 @@
-package org.pokerino.backend.adapter.in.dto;
+package org.pokerino.backend.adapter.in.dto.game;
 
 public record HostGameDto(
     String name,

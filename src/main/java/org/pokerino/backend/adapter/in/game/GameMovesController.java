@@ -1,4 +1,4 @@
-package org.pokerino.backend.adapter.in;
+package org.pokerino.backend.adapter.in.game;
 
 import org.pokerino.backend.adapter.in.response.ApiResponse;
 import org.pokerino.backend.application.service.GameMovesService;

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.adapter.in.dto.HostGameDto;
+import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.domain.outbound.exception.BadRequestException;
 
 @Setter
