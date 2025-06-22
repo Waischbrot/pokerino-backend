@@ -7,12 +7,11 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
 import org.pokerino.backend.adapter.in.response.game.GameResponse;
+import org.pokerino.backend.adapter.out.websocket.message.PlayerJoinMessage;
+import org.pokerino.backend.adapter.out.websocket.message.PlayerLeaveMessage;
 import org.pokerino.backend.application.port.in.GetGameUseCase;
 import org.pokerino.backend.application.port.in.TableUseCase;
-import org.pokerino.backend.application.port.out.LoadGamePort;
-import org.pokerino.backend.application.port.out.LoadUserPort;
-import org.pokerino.backend.application.port.out.ManageGamePort;
-import org.pokerino.backend.application.port.out.SaveUserPort;
+import org.pokerino.backend.application.port.out.*;
 import org.pokerino.backend.domain.game.GameState;
 import org.pokerino.backend.domain.game.PokerGame;
 import org.pokerino.backend.domain.game.TableOptions;
@@ -32,6 +31,7 @@ public final class TableService implements TableUseCase {
     LoadGamePort loadGamePort;
     LoadUserPort loadUserPort;
     SaveUserPort saveUserPort;
+    GameNotificationPort gameNotificationPort;
 
     @Override
     public GameResponse host(HostGameDto hostGameDto) {
@@ -116,6 +116,9 @@ public final class TableService implements TableUseCase {
         // Add the player to the new game
         pokerGame.addPlayer(user);
 
+        // Notify the websocket that the user joined the game. -> For other players to update their lobbies.
+        gameNotificationPort.notifyPlayerJoin(pokerGame.getGameCode(), new PlayerJoinMessage(username, pokerGame.playerCount()));
+
         // Return the game response
         return getGameUseCase.toResponse(pokerGame, username);
     }
@@ -141,7 +144,7 @@ public final class TableService implements TableUseCase {
             if (pokerGame.playerCount() == 0) {
                 manageGamePort.removeGame(pokerGame.getGameCode());
             } else {
-                // TODO: Notify the Websocket that the player left the game.
+                gameNotificationPort.notifyPlayerLeave(pokerGame.getGameCode(), new PlayerLeaveMessage(username, pokerGame.playerCount()));
             }
             return;
         }
