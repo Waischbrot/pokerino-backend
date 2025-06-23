@@ -1,4 +1,4 @@
-package org.pokerino.backend.application.service;
+package org.pokerino.backend.application.service.game;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -7,11 +7,14 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
 import org.pokerino.backend.adapter.in.response.game.GameResponse;
-import org.pokerino.backend.adapter.out.websocket.message.PlayerJoinMessage;
-import org.pokerino.backend.adapter.out.websocket.message.PlayerLeaveMessage;
-import org.pokerino.backend.application.port.in.GetGameUseCase;
-import org.pokerino.backend.application.port.in.TableUseCase;
+import org.pokerino.backend.adapter.out.websocket.message.log.PlayerJoinMessage;
+import org.pokerino.backend.adapter.out.websocket.message.log.PlayerLeaveMessage;
+import org.pokerino.backend.application.port.in.game.GameUseCase;
+import org.pokerino.backend.application.port.in.game.GetGameUseCase;
+import org.pokerino.backend.application.port.in.game.TableUseCase;
+import org.pokerino.backend.application.port.in.game.TurnUseCase;
 import org.pokerino.backend.application.port.out.*;
+import org.pokerino.backend.domain.game.GamePlayer;
 import org.pokerino.backend.domain.game.GameState;
 import org.pokerino.backend.domain.game.PokerGame;
 import org.pokerino.backend.domain.game.TableOptions;
@@ -32,6 +35,8 @@ public final class TableService implements TableUseCase {
     LoadUserPort loadUserPort;
     SaveUserPort saveUserPort;
     GameNotificationPort gameNotificationPort;
+    TurnUseCase turnUseCase;
+    GameUseCase gameUseCase;
 
     @Override
     public GameResponse host(HostGameDto hostGameDto) {
@@ -150,24 +155,24 @@ public final class TableService implements TableUseCase {
         }
 
         // Check if its the turn of this user -> if so, skip the turn and notify the Websocket.
-        if (pokerGame.getCurrent().getUsername().equals(username)) {
-
-            // TODO: Skip his turn using FOLD and notify the Websocket about it.
-
+        final GamePlayer player = pokerGame.getPlayer(username);
+        if (pokerGame.getCurrent().equals(player)) {
+            // Skip the turn of the player by folding.
+            turnUseCase.fold(pokerGame, player);
         }
 
-        // TODO: Notify the Websocket that the user left the game.
+        // Other logic like setting the player to be dead.
+        player.setDead(true);
+        player.setFolded(true); // Fold anyways. !!! Be careful when calculating the pot, don't skip the dead players.
 
-        // TODO: Handle other logic like setting the player to be dead.
+        // Notify the Websocket that the user left the game.
+        gameNotificationPort.notifyPlayerLeave(pokerGame.getGameCode(), new PlayerLeaveMessage(username, pokerGame.playerCount()));
 
-        // TODO: All his chips just stay in the game, his pot stays as well. In the end the winner will get them like everyone elses.
-
-
-
-        // TODO: Instead of this, check how many players are still left alive (aliveCount). Since no one is explicitly removed, this does nothing.
-        final int count = pokerGame.playerCount();
+        // Check if only one player remains in the game -> We can end it here!
+        final int count = pokerGame.aliveCount();
         if (count == 1) {
             // Last player won, handle and then delete the game.
+            this.gameUseCase.win(pokerGame, pokerGame.getCurrent());
         } else if (count == 0) {
             manageGamePort.removeGame(pokerGame.getGameCode());
         }
