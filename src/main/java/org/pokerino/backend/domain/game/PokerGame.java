@@ -9,7 +9,6 @@ import org.pokerino.backend.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -29,7 +28,7 @@ public final class PokerGame {
         this.options = options;
         this.state = GameState.WAITING_FOR_PLAYERS;
         this.participants = new ArrayList<>();
-        this.dealer = ThreadLocalRandom.current().nextInt(options.getMaxPlayers()); // Pick a random dealer
+        this.dealer = 0;
         this.cardsOnTable = new String[5]; // Initialise array filled with null
     }
 
@@ -70,6 +69,16 @@ public final class PokerGame {
 
     public int playerCount() {
         return this.participants.size();
+    }
+
+    public int aliveCount() {
+        int count = 0;
+        for (GamePlayer participant : this.participants) {
+            if (!participant.isDead()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public long getCurrentBet() {
