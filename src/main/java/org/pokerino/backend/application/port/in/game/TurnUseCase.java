@@ -7,6 +7,6 @@ public interface TurnUseCase {
     void fold(PokerGame game, GamePlayer player);
     void check(PokerGame game, GamePlayer player);
     void call(PokerGame game, GamePlayer player);
-    void raise(PokerGame game, GamePlayer player, int numberOfChips);
+    void raise(PokerGame game, GamePlayer player, long chips);
     void allIn(PokerGame game, GamePlayer player);
 }
