@@ -1,10 +1,10 @@
-package org.pokerino.backend.application.service;
+package org.pokerino.backend.application.service.game;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.application.port.in.DeckRankingUseCase;
-import org.pokerino.backend.application.port.in.FindStrongestHandUseCase;
+import org.pokerino.backend.application.port.in.game.DeckRankingUseCase;
+import org.pokerino.backend.application.port.in.game.FindStrongestHandUseCase;
 import org.pokerino.backend.domain.game.GamePlayer;
 import org.pokerino.backend.domain.game.PokerGame;
 import org.pokerino.backend.domain.cards.rank.DeckRanking;

@@ -1,9 +1,9 @@
-package org.pokerino.backend.application.service;
+package org.pokerino.backend.application.service.game;
 
 import java.util.List;
 import java.util.UUID;
 
-import org.pokerino.backend.application.port.in.MatchMakingUseCase;
+import org.pokerino.backend.application.port.in.game.MatchMakingUseCase;
 import org.pokerino.backend.application.port.out.LoadGamePort;
 import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.domain.outbound.game.OutboundAlreadyStartedException;

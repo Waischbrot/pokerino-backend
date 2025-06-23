@@ -1,11 +1,11 @@
-package org.pokerino.backend.application.service;
+package org.pokerino.backend.application.service.game;
 
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.response.game.*;
-import org.pokerino.backend.application.port.in.GetGameUseCase;
+import org.pokerino.backend.application.port.in.game.GetGameUseCase;
 import org.pokerino.backend.domain.game.Action;
 import org.pokerino.backend.domain.game.GamePlayer;
 import org.pokerino.backend.domain.game.GameState;

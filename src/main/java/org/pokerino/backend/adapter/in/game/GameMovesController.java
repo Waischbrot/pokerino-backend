@@ -1,7 +1,7 @@
 package org.pokerino.backend.adapter.in.game;
 
 import org.pokerino.backend.adapter.in.response.ApiResponse;
-import org.pokerino.backend.application.service.GameMovesService;
+import org.pokerino.backend.application.service.game.GameMovesService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

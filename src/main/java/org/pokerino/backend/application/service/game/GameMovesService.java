@@ -1,7 +1,7 @@
-package org.pokerino.backend.application.service;
+package org.pokerino.backend.application.service.game;
 
 import org.pokerino.backend.adapter.out.persistence.GameInMemoryRepository;
-import org.pokerino.backend.application.port.in.GameMovesUseCase;
+import org.pokerino.backend.application.port.in.game.GameMovesUseCase;
 import org.pokerino.backend.domain.exception.game.CallIsNotNeededException;
 import org.pokerino.backend.domain.exception.game.NotEnoughChipsException;
 import org.pokerino.backend.domain.exception.game.WrongRaiseException;

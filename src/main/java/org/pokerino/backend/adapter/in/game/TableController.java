@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
 import org.pokerino.backend.adapter.in.response.game.GameResponse;
-import org.pokerino.backend.application.port.in.TableUseCase;
+import org.pokerino.backend.application.port.in.game.TableUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

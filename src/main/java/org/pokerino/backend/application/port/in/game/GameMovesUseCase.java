@@ -1,4 +1,4 @@
-package org.pokerino.backend.application.port.in;
+package org.pokerino.backend.application.port.in.game;
 
 public interface GameMovesUseCase {
     void fold(long playerId);
