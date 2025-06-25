@@ -5,4 +5,6 @@ import org.pokerino.backend.adapter.in.response.UserResponse;
 public interface UserUseCase {
     UserResponse getMe();
     UserResponse getUser(String username);
+    String changeUsername(String newUsername);
+    boolean changePassword(String newPassword);
 }
