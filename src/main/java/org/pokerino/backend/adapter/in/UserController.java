@@ -27,4 +27,8 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@RequestParam String username) {
         return ResponseEntity.ok(userUseCase.getUser(username));
     }
+
+    // Username -> Ändern in DB, Neuen Token generieren und zurückgeben
+
+    // Password -> Ändern in dem man das neue hasht und setzt
 }
