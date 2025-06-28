@@ -8,9 +8,10 @@ public record ActionMessage(
         String username,
         Action action,
         long value,
-        long currentBet
+        long currentBet,
+        boolean allIn
 ) {
-    public ActionMessage(String username, Action action, long value, long currentBet) {
-        this(OutboundMessageType.LOG_ACTION, username, action, value, currentBet);
+    public ActionMessage(String username, Action action, long value, long currentBet, boolean allIn) {
+        this(OutboundMessageType.LOG_ACTION, username, action, value, currentBet, allIn);
     }
 }

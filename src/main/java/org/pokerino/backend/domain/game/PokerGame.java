@@ -30,6 +30,7 @@ public final class PokerGame {
         this.participants = new ArrayList<>();
         this.dealer = 0;
         this.cardsOnTable = new String[5]; // Initialise array filled with null
+        this.minRaise = options.getSmallBlind() * 2; // The minimum raise is the big blind by default
     }
 
     // Adds a player to the game, but at this point his chips were already deducted
@@ -121,6 +122,23 @@ public final class PokerGame {
 
     public void moveDealer() {
         this.dealer = (this.dealer + 1) % playerCount();
+    }
+
+    // Returns if the betting round is over
+    public boolean moveCurrent() {
+        this.current = (this.current + 1) % playerCount();
+        if (this.current == this.dealer) {
+            // If we are back at the dealer, the betting round is over if not all active players have the same bet
+            for (GamePlayer participant : this.participants) {
+                if (!participant.isDead() && !participant.isFolded()) {
+                    if (participant.getBet() != getCurrentBet()) {
+                        return false; // Not all active players have the same bet, continue betting
+                    }
+                }
+            }
+            return true;
+        }
+        return false; // Continue to the next player
     }
 
     public void resetCards() {
