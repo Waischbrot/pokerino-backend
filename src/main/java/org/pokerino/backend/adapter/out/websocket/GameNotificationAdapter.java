@@ -4,12 +4,8 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.adapter.out.websocket.message.FinishGameMessage;
-import org.pokerino.backend.adapter.out.websocket.message.NextBetMessage;
-import org.pokerino.backend.adapter.out.websocket.message.NextRoundMessage;
-import org.pokerino.backend.adapter.out.websocket.message.TurnMessage;
+import org.pokerino.backend.adapter.out.websocket.message.*;
 import org.pokerino.backend.adapter.out.websocket.message.log.ActionMessage;
-import org.pokerino.backend.adapter.out.websocket.message.log.BlindMessage;
 import org.pokerino.backend.adapter.out.websocket.message.log.PlayerJoinMessage;
 import org.pokerino.backend.adapter.out.websocket.message.log.PlayerLeaveMessage;
 import org.pokerino.backend.application.port.out.GameNotificationPort;
@@ -42,7 +38,7 @@ public final class GameNotificationAdapter implements GameNotificationPort {
     }
 
     @Override
-    public void notifyBlind(String gameCode, BlindMessage message) {
+    public void notifyEndRound(String gameCode, EndRoundMessage message) {
         notify(gameCode, message);
     }
 
@@ -57,12 +53,17 @@ public final class GameNotificationAdapter implements GameNotificationPort {
     }
 
     @Override
-    public void notifyNextBet(String gameCode, NextBetMessage message) {
+    public void notifyNewCards(String gameCode, NewCardsMessage message) {
         notify(gameCode, message);
     }
 
     @Override
     public void notifyNextRound(String gameCode, NextRoundMessage message) {
+        notify(gameCode, message);
+    }
+
+    @Override
+    public void notifyStartGame(String gameCode, StartGameMessage message) {
         notify(gameCode, message);
     }
 
