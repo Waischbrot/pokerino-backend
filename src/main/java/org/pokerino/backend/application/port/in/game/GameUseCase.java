@@ -8,4 +8,5 @@ public interface GameUseCase {
     void nextTurn(PokerGame game);
     void endBettingRound(PokerGame game);
     void rememberTurn(PokerGame game);
+    void startScheduler(PokerGame game);
 }

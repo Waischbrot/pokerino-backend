@@ -75,6 +75,9 @@ public final class TableService implements TableUseCase {
         // Add the player to the new game
         pokerGame.addPlayer(user);
 
+        // Start the scheduler for the game.
+        gameUseCase.startScheduler(pokerGame);
+
         // Return the game response
         return getGameUseCase.toResponse(pokerGame, username);
     }
