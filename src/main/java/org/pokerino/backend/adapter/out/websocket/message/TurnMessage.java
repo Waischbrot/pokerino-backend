@@ -8,9 +8,9 @@ public record TurnMessage(
         OutboundMessageType type,
         String username,
         List<Action> actions,
-        long currentBet,
-        int now,
-        int ending
+        long currentBet, // THIS IS NOT THE CURRENT BET OF THE PLAYER, BUT THE CURRENT BET OF THE ROUND
+        int now, // In Seconds
+        int ending // In Seconds
 ) {
     public TurnMessage(String username,
                        List<Action> actions,

@@ -8,6 +8,6 @@ public record PlayerJoinMessage(
         int playerCount
 ) {
     public PlayerJoinMessage(String username, int playerCount) {
-        this(OutboundMessageType.PLAYER_JOIN, username, playerCount);
+        this(OutboundMessageType.LOG_PLAYER_JOIN, username, playerCount);
     }
 }

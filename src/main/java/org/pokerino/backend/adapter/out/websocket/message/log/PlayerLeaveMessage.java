@@ -8,6 +8,6 @@ public record PlayerLeaveMessage(
         int playerCount
 ) {
     public PlayerLeaveMessage(String username, int playerCount) {
-        this(OutboundMessageType.PLAYER_LEAVE, username, playerCount);
+        this(OutboundMessageType.LOG_PLAYER_LEAVE, username, playerCount);
     }
 }

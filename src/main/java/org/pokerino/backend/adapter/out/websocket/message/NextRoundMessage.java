@@ -1,19 +1,13 @@
 package org.pokerino.backend.adapter.out.websocket.message;
 
-import java.util.List;
-import java.util.Map;
-
 public record NextRoundMessage(
         OutboundMessageType type,
-        String winner,
-        long pot,
-        Map<String, List<String>> showdownCards,
-        TurnMessage turn
+        String smallBlindUsername,
+        long smallBlind,
+        String bigBlindUsername,
+        long bigBlind
 ) {
-    public NextRoundMessage(String winner,
-                            long pot,
-                            Map<String, List<String>> showdownCards,
-                            TurnMessage turn) {
-        this(OutboundMessageType.NEXT_ROUND, winner, pot, showdownCards, turn);
+    public NextRoundMessage(String smallBlindUsername, long smallBlind, String bigBlindUsername, long bigBlind) {
+        this(OutboundMessageType.NEXT_ROUND, smallBlindUsername, smallBlind, bigBlindUsername, bigBlind);
     }
 }

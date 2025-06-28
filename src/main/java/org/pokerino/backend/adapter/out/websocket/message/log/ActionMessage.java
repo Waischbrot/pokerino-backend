@@ -11,6 +11,6 @@ public record ActionMessage(
         long currentBet
 ) {
     public ActionMessage(String username, Action action, long value, long currentBet) {
-        this(OutboundMessageType.ACTION, username, action, value, currentBet);
+        this(OutboundMessageType.LOG_ACTION, username, action, value, currentBet);
     }
 }
