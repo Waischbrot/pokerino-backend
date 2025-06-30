@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
 import org.pokerino.backend.adapter.out.websocket.message.*;
+import org.pokerino.backend.adapter.out.websocket.message.log.ActionMessage;
 import org.pokerino.backend.application.port.in.game.FindStrongestHandUseCase;
 import org.pokerino.backend.application.port.in.game.GameUseCase;
 import org.pokerino.backend.application.port.in.game.GetGameUseCase;
@@ -33,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class GameService implements GameUseCase {
-    final TurnUseCase turnUseCase;
     final ManageGamePort manageGamePort;
     final LoadUserPort loadUserPort;
     final SaveUserPort saveUserPort;
@@ -88,7 +88,20 @@ public final class GameService implements GameUseCase {
             } else if (countdown >= turnTime) {
                 // Time's up: cancel the scheduler and fold the player
                 currentTask.cancel(false); // Cancel this task
-                turnUseCase.fold(game, current);
+                current.setFolded(true);
+                if (game.moveCurrent()) { // The betting round is over, proceed the game
+                    endBettingRound(game); // either end the round or add new cards to table
+                } else {
+                    final ActionMessage actionMessage = new ActionMessage(
+                             current.getUsername(),
+                            Action.FOLD,
+                            0,
+                            game.getCurrentBet(),
+                            false
+                    );
+                    gameNotificationPort.notifyAction(game.getGameCode(), actionMessage);
+                    nextTurn(game);
+                }
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
@@ -102,9 +115,7 @@ public final class GameService implements GameUseCase {
             // count the pot
             long pot = 0;
             for (final GamePlayer participant : game.getParticipants()) {
-                if (!participant.isDead()) {
-                    pot += participant.getBet();
-                }
+                pot += participant.getBet();
             }
 
             // Find the winners
