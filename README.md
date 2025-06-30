@@ -213,16 +213,7 @@ Host a new table/session.
 >     "folded": false,
 >     "dead": false
 >   },
->   "opponents": [
->     {
->       "username": "bob",
->       "host": true,
->       "chips": 10000,
->       "bet": 0,
->       "folded": false,
->       "dead": false
->     }
->   ],
+>   "opponents": [],
 >   "cardsOnTable": [null, null, null, null, null],
 >   "currentPlayer": null,
 >   "actions": null
@@ -285,9 +276,6 @@ Leave the current table/session.
 > **Headers:**  
 > `Authorization: Bearer <token>`
 
-> **Return:**  
-> *(No content, returns error if not in a table)*
-
 ---
 
 ### **GET** `/table/current`
@@ -299,10 +287,50 @@ Get the current table/session the user is in.
 > **Return:**
 > ```json
 > {
->   // GameResponse object
+>   "gameCode": "482639",
+>   "gameState": "IN_ROUND",
+>   "tableOptions": {
+>     "name": "High Rollers Table",
+>     "maxPlayers": 6,
+>     "turnTime": 30,
+>     "startBalance": 10000,
+>     "smallBlind": 50,
+>     "increasingBlind": true
+>   },
+>   "player": {
+>     "username": "alice",
+>     "host": false,
+>     "cards": ["As", "Kh"],
+>     "chips": 8500,
+>     "bet": 200,
+>     "folded": false,
+>     "dead": false
+>   },
+>   "opponents": [
+>     {
+>       "username": "bob",
+>       "host": true,
+>       "chips": 9000,
+>       "bet": 200,
+>       "folded": false,
+>       "dead": false
+>     },
+>     {
+>       "username": "carol",
+>       "host": false,
+>       "chips": 7800,
+>       "bet": 0,
+>       "folded": true,
+>       "dead": false
+>     }
+>   ],
+>   "cardsOnTable": ["2d", "5h", "9s", null, null],
+>   "currentPlayer": "alice",
+>   "actions": {
+>     "actions": ["FOLD", "CALL", "RAISE"]
+>   }
 > }
 > ```
-> *(Returns a GameResponse if the user is currently playing, including available actions if it's the player's turn)*
 
 ---
 
@@ -315,10 +343,9 @@ Get the list of available actions for the current player (if it's their turn).
 > **Return:**
 > ```json
 > {
->   // ActionsResponse object
+>   "actions": ["FOLD", "CALL", "RAISE"]
 > }
 > ```
-> *(Returns a list of available actions for the current player if it's their turn)*
 
 ---
 
