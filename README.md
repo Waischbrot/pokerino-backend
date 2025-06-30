@@ -49,9 +49,7 @@ Register a new account to the backend
 > }
 > ```
 
-> Return:
-> - OK
-> - Internal Server Error
+> Return: `true`
 
 ---
 
@@ -102,7 +100,74 @@ Check if the provided JWT token is valid
 
 ## Rest User Management
 
+### **GET** `/user/me`
+Get the currently authenticated user's profile.
 
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Return:**
+> ```json
+> {
+>   "username": "username",
+>   "joinDate": "date",
+>   "chips": 0,
+>   "experience": {
+>     "level": 0,
+>     "currentExperience": 0,
+>     "requiredExperience": 0
+>   }
+> }
+> ```
+
+---
+
+### **GET** `/user`
+Get a user's profile by username.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> Query Parameter: `username`
+
+> **Return:**
+> ```json
+> {
+>   "username": "username",
+>   "joinDate": "date",
+>   "chips": 0,
+>   "experience": {
+>     "level": 0,
+>     "currentExperience": 0,
+>     "requiredExperience": 0
+>   }
+> }
+> ```
+
+---
+
+### **POST** `/user/change-username`
+Change the currently authenticated user's username.  
+Returns a new JWT token for the updated username.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> Query Parameter: `newUsername`
+
+> Return: `new-jwt-token`
+
+---
+
+### **POST** `/user/change-password`
+Change the currently authenticated user's password.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> Query Parameter: `newPassword`
+
+> Return: `true`
 
 ---
 
