@@ -1,18 +1,21 @@
-version: '3.8'
-
 services:
   mariadb:
     image: mariadb:latest
     container_name: mariadb
     ports:
-      - "${MARIADB_PORT}:${MARIADB_PORT}"
+      - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MARIADB_NAME}
-      - MYSQL_USER=${MARIADB_USERNAME}
-      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_NAME}
+      MARIADB_USER: ${MARIADB_USERNAME}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - backend-network
 
 volumes:
   mariadb_data:
+
+networks:
+  backend-network:
