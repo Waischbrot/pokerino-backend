@@ -496,6 +496,8 @@ The game ended. This is the winner!
 #### **NEXT_ROUND**
 A new round is beginning.
 
+> ⚠️ **Attention:** At this point, new cards have been issued to the players. These should be fetched over the REST API.
+
 ```json
 {
   "type": "NEXT_ROUND",
