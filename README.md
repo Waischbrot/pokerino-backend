@@ -7,8 +7,31 @@ This project uses Websockets for real-time gameplay and exposes REST endpoints e
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.2-brightgreen.svg?logo=spring)](https://spring.io/projects/spring-boot)
 [![Gradle](https://img.shields.io/badge/Gradle-8.11.1-green.svg?logo=gradle)](https://gradle.org/)
 
-## Used Technologies
+## Content
+- [Used Technologies](#used-technologies)
+- [Configuration](#configuration)
+- [Rest Authentication](#rest-authentication)
+    - [POST /auth/signup](#post-authsignup)
+    - [POST /auth/login](#post-authlogin)
+    - [GET /auth/username](#get-authusername)
+    - [GET /auth/token](#get-authtoken)
+- [Rest User Management](#rest-user-management)
+    - [GET /user/me](#get-userme)
+    - [GET /user](#get-user)
+    - [POST /user/change-username](#post-userchange-username)
+    - [POST /user/change-password](#post-userchange-password)
+- [Rest Table/Session Management](#rest-tablesession-management)
+    - [POST /table/host](#post-tablehost)
+    - [POST /table/join](#post-tablejoin)
+    - [POST /table/leave](#post-tableleave)
+    - [GET /table/current](#get-tablecurrent)
+    - [GET /table/current/actions](#get-tablecurrentactions)
+- [Websocket Connect to App](#websocket-connect-to-app)
+- [Websocket Outbound Notifications](#websocket-outbound-notifications)
+- [Websocket Inbound Messages](#websocket-inbound-messages)
+- [Final Words](#final-words)
 
+## Used Technologies
 - Java 21 + Spring Boot
 - Gradle
 - MariaDB
@@ -17,7 +40,6 @@ This project uses Websockets for real-time gameplay and exposes REST endpoints e
 - JWT for authentication
 
 ## Configuration
-
 The backend is configured via environment variables. The following variables are required:
 
 | Variable Name         | Description                        | Example Value      | Required |
@@ -411,7 +433,6 @@ To perform a turn action in a poker game, send a message to the following STOMP 
 ---
 
 ## Final Words
-
 This project was a group effort for a course in our studies called "Web Engineering".
 Although we chose a challenging topic and lost one teammate along the way due to exmatriculation,
 we truly enjoyed working on it together, writing thousands of lines in the progress.
