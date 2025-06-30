@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.out.websocket.message.NextRoundMessage;
 import org.pokerino.backend.adapter.out.websocket.message.StartGameMessage;
 import org.pokerino.backend.application.port.in.game.GameUseCase;
+import org.pokerino.backend.application.port.in.game.TurnUseCase;
 import org.pokerino.backend.application.port.out.GameNotificationPort;
 import org.pokerino.backend.application.port.out.LoadUserPort;
 import org.pokerino.backend.application.port.out.ManageGamePort;
@@ -17,17 +18,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class GameService implements GameUseCase {
+    final TurnUseCase turnUseCase;
     final ManageGamePort manageGamePort;
     final LoadUserPort loadUserPort;
     final SaveUserPort saveUserPort;
     final GameNotificationPort gameNotificationPort;
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    ScheduledFuture<?> currentTask;
     int countdown;
 
     @Override
@@ -36,11 +40,34 @@ public final class GameService implements GameUseCase {
         // rolls out the exp rewards and the prize pool
     }
 
+    // inherits the scheduler while a round is running
     @Override
     public void nextTurn(PokerGame game) {
+        // Cancel any previous scheduler for safety
+        if (currentTask != null && !currentTask.isDone()) {
+            currentTask.cancel(true);
+        }
+        countdown = 0;
+        final int turnTime = game.getOptions().getTurnTime();
+        final GamePlayer current = game.getCurrent();
 
+        currentTask = scheduler.scheduleAtFixedRate(() -> {
+            countdown++;
+
+            // Call rememberTurn every 5 seconds, but not at the end
+            if (countdown % 5 == 0 && countdown < turnTime) {
+                rememberTurn(game);
+            }
+
+            if (countdown >= turnTime) {
+                // Time's up: cancel the scheduler and fold the player
+                currentTask.cancel(false); // Cancel this task
+                turnUseCase.fold(game, current);
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 
+    // inherits the scheduler while one round is ending until the start of the next round
     @Override
     public void endBettingRound(PokerGame game) {
 
@@ -51,8 +78,7 @@ public final class GameService implements GameUseCase {
     public void rememberTurn(PokerGame game) {
         final GamePlayer current = game.getCurrent();
 
-        // Check if his turn is over -> Switch to the next player / end the round
-        // Find available actions and send a message
+        // TODO: Find available actions and send a message
     }
 
     @Override
@@ -102,7 +128,7 @@ public final class GameService implements GameUseCase {
         StartGameMessage message = new StartGameMessage(game.playerCount());
         gameNotificationPort.notifyStartGame(game.getGameCode(), message);
         nextRound(game); // Start the first round of the game
-        rememberTurn(game); // Start remembering players to do their turns
+        nextTurn(game); // Notify the game service that the first turn started
     }
 
     @Override
