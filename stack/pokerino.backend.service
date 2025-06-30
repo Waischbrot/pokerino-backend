@@ -5,11 +5,11 @@ After=network.target
 [Service]
 User=www-data
 WorkingDirectory=/opt/pokerino-backend
-ExecStart=/usr/bin/java -Xmx2048m -Xms1024m -jar /opt/pokerino-backend/build/libs/pokerino-backend-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/lib/jvm/jdk-21.0.7-oracle-x64/bin/java -Xmx2048m -Xms1024m -jar /opt/pokerino-backend/build/libs/pokerino-backend-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=143
 Restart=always
 RestartSec=5
+EnvironmentFile=/root/docker-compose/pokerino/.env
 
 [Install]
 WantedBy=multi-user.target
-
