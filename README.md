@@ -410,6 +410,148 @@ stompClient.activate();
 
 ## Websocket Outbound Notifications
 
+During a game, the backend sends real-time notifications to all players in a table via WebSocket.  
+**All notifications are sent to the destination:**
+```
+/topic/game/{gameCode}
+```
+where `{gameCode}` is the 6-digit code of the current game (e.g., `/topic/game/127413`).
+
+---
+
+### Outbound Message Types
+
+All outbound messages include a `type` field indicating the event type.  
+The following message types and payloads exist:
+
+---
+
+#### **LOG_ACTION**
+A user made a turn (for logging purposes).
+
+```json
+{
+  "type": "LOG_ACTION",
+  "username": "alice",
+  "action": "RAISE",
+  "value": 500,
+  "currentBet": 500,
+  "allIn": false
+}
+```
+
+---
+
+#### **LOG_PLAYER_JOIN**
+A new player joined the lobby.
+
+```json
+{
+  "type": "LOG_PLAYER_JOIN",
+  "username": "bob",
+  "playerCount": 4
+}
+```
+
+---
+
+#### **LOG_PLAYER_LEAVE**
+A player left the lobby.
+
+```json
+{
+  "type": "LOG_PLAYER_LEAVE",
+  "username": "carol",
+  "playerCount": 3
+}
+```
+
+---
+
+#### **START_GAME**
+The game started and is no longer joinable.
+
+```json
+{
+  "type": "START_GAME",
+  "playerCount": 4
+}
+```
+
+---
+
+#### **FINISH_GAME**
+The game ended. This is the winner!
+
+```json
+{
+  "type": "FINISH_GAME",
+  "winner": "alice",
+  "total": 40000
+}
+```
+
+---
+
+#### **NEXT_ROUND**
+A new round is beginning.
+
+```json
+{
+  "type": "NEXT_ROUND",
+  "smallBlindUsername": "bob",
+  "smallBlind": 100,
+  "bigBlindUsername": "carol",
+  "bigBlind": 200
+}
+```
+
+---
+
+#### **END_ROUND**
+The round ended. This is the winner of this round / showdown.
+
+```json
+{
+  "type": "END_ROUND",
+  "winners": ["alice"],
+  "pot": 1200,
+  "showdownCards": {
+    "alice": ["As", "Kh"],
+    "bob": ["9c", "9d"]
+  }
+}
+```
+
+---
+
+#### **NEW_CARDS**
+New cards opened on the table.
+
+```json
+{
+  "type": "NEW_CARDS",
+  "cardsOnTable": ["As", "Kh", "Qh, ","2d"],
+  "newCards": ["2d"]
+}
+```
+
+---
+
+#### **TURN**
+Current turn of the game.
+
+```json
+{
+  "type": "TURN",
+  "username": "alice",
+  "actions": ["FOLD", "CALL", "RAISE"],
+  "currentBet": 200,
+  "now": 5,
+  "ending": 30
+}
+```
+
 ---
 
 ## Websocket Inbound Messages
