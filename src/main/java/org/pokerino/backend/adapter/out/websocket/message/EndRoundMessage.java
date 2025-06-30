@@ -5,11 +5,11 @@ import java.util.Map;
 
 public record EndRoundMessage(
         OutboundMessageType type,
-        String winner,
+        List<String> winners,
         long pot,
         Map<String, List<String>> showdownCards
 ) {
-    public EndRoundMessage(String winner, long pot, Map<String, List<String>> showdownCards) {
-        this(OutboundMessageType.END_ROUND, winner, pot, showdownCards);
+    public EndRoundMessage(List<String> winners, long pot, Map<String, List<String>> showdownCards) {
+        this(OutboundMessageType.END_ROUND, winners, pot, showdownCards);
     }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.pokerino.backend.domain.cards.CardStack;
 import org.pokerino.backend.domain.outbound.exception.BadRequestException;
 import org.pokerino.backend.domain.user.User;
 
@@ -21,6 +22,7 @@ public final class PokerGame {
     final List<GamePlayer> participants; // All participants including those that lost
     int dealer; // Keeps the index of where the dealer is located
     final String[] cardsOnTable; // Cards in the middle, array values are reset to null after each round
+    CardStack cardStack; // The card stack used to deal cards, initialized with a new deck
     int current; // The index of the current player, used to determine whose turn it is
     long minRaise; // The minimum raise that can be made by the players
 
@@ -31,6 +33,7 @@ public final class PokerGame {
         this.participants = new ArrayList<>();
         this.dealer = 0;
         this.cardsOnTable = new String[5]; // Initialise array filled with null
+        this.cardStack = CardStack.create();
         this.minRaise = options.getSmallBlind() * 2; // The minimum raise is the big blind by default
     }
 
@@ -143,6 +146,7 @@ public final class PokerGame {
     }
 
     public void resetCards() {
+        cardStack = CardStack.create(); // Reset the card stack to a new deck
         for (int i = 0; i < 5; i++) {
             this.cardsOnTable[i] = null;
         }
@@ -154,6 +158,29 @@ public final class PokerGame {
             participant.setBet(0);
             participant.setFolded(false);
             participant.setHand(null, null);
+        }
+    }
+
+    public int openCards() {
+        int count = 0;
+        for (String card : this.cardsOnTable) {
+            if (card != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void serveCards(int count) {
+        if (count < 1 || count > 3) {
+            throw new BadRequestException("Can only serve 1 to 3 cards at a time.");
+        }
+        if (count + openCards() >= 5) {
+            throw new BadRequestException("Cannot serve more than 5 cards on the table.");
+        }
+        for (int i = 0; i < count; i++) {
+            String card = this.cardStack.take();
+            this.cardsOnTable[openCards()] = card; // Place the card on the table
         }
     }
 }

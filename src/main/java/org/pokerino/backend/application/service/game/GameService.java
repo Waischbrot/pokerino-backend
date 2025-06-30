@@ -3,19 +3,27 @@ package org.pokerino.backend.application.service.game;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.pokerino.backend.adapter.out.websocket.message.NextRoundMessage;
-import org.pokerino.backend.adapter.out.websocket.message.StartGameMessage;
+import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
+import org.pokerino.backend.adapter.out.websocket.message.*;
+import org.pokerino.backend.application.port.in.game.FindStrongestHandUseCase;
 import org.pokerino.backend.application.port.in.game.GameUseCase;
+import org.pokerino.backend.application.port.in.game.GetGameUseCase;
 import org.pokerino.backend.application.port.in.game.TurnUseCase;
 import org.pokerino.backend.application.port.out.GameNotificationPort;
 import org.pokerino.backend.application.port.out.LoadUserPort;
 import org.pokerino.backend.application.port.out.ManageGamePort;
 import org.pokerino.backend.application.port.out.SaveUserPort;
+import org.pokerino.backend.domain.game.Action;
 import org.pokerino.backend.domain.game.GamePlayer;
 import org.pokerino.backend.domain.game.GameState;
 import org.pokerino.backend.domain.game.PokerGame;
+import org.pokerino.backend.domain.user.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -30,14 +38,34 @@ public final class GameService implements GameUseCase {
     final LoadUserPort loadUserPort;
     final SaveUserPort saveUserPort;
     final GameNotificationPort gameNotificationPort;
+    final GetGameUseCase getGameUseCase;
+    final FindStrongestHandUseCase findStrongestHandUseCase;
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     ScheduledFuture<?> currentTask;
     int countdown;
 
     @Override
     public void win(final PokerGame game, final GamePlayer player) {
-        // stops all schedulers and cleans the game
-        // rolls out the exp rewards and the prize pool
+        // Stop the running scheduler for this game
+        if (currentTask != null && !currentTask.isDone()) {
+            currentTask.cancel(true);
+        }
+
+        final long prize = game.getTotalChips();
+        final FinishGameMessage finishGameMessage = new FinishGameMessage(
+                player.getUsername(),
+                prize
+        );
+
+        final User user = loadUserPort.findByUsername(player.getUsername())
+                .orElseThrow(() -> new IllegalStateException("User not found: " + player.getUsername()));
+
+        user.setChips(user.getChips() + prize);
+
+        // TODO: Set exp for different players -> need a mechanism for that! For now just give 1000 exp to winner
+        user.setExperience(user.getExperience() + 1000);
+
+        saveUserPort.saveUser(user); // store the user with the changes
     }
 
     // inherits the scheduler while a round is running
@@ -57,9 +85,7 @@ public final class GameService implements GameUseCase {
             // Call rememberTurn every 5 seconds, but not at the end
             if (countdown % 5 == 0 && countdown < turnTime) {
                 rememberTurn(game);
-            }
-
-            if (countdown >= turnTime) {
+            } else if (countdown >= turnTime) {
                 // Time's up: cancel the scheduler and fold the player
                 currentTask.cancel(false); // Cancel this task
                 turnUseCase.fold(game, current);
@@ -70,15 +96,112 @@ public final class GameService implements GameUseCase {
     // inherits the scheduler while one round is ending until the start of the next round
     @Override
     public void endBettingRound(PokerGame game) {
+        final int cards = game.openCards();
+        final var temp = game.getCardsOnTable();
+        if (cards == 5) { // Now we need to determine the winner!
+            // count the pot
+            long pot = 0;
+            for (final GamePlayer participant : game.getParticipants()) {
+                if (!participant.isDead()) {
+                    pot += participant.getBet();
+                }
+            }
 
+            // Find the winners
+            final List<GamePlayer> winners = findStrongestHandUseCase.findStrongestHands(game);
+
+            // Share the chips among the winners
+            long share = pot / winners.size();
+            long remainder = pot % winners.size();
+
+            for (int i = 0; i < winners.size(); i++) {
+                GamePlayer winner = winners.get(i);
+                long chipsToAdd = share + (i < remainder ? 1 : 0); // Distribute remainder
+                winner.setChips(winner.getChips() + chipsToAdd);
+            }
+
+            // End Round message
+            final Map<String, List<String>> showdownCards = new HashMap<>();
+            for (final GamePlayer participant : game.getParticipants()) {
+                if (participant.isDead() || participant.isFolded()) {
+                    continue;
+                }
+                showdownCards.put(participant.getUsername(), Arrays.asList(participant.getHand()));
+            }
+            final EndRoundMessage endRoundMessage = new EndRoundMessage(
+                    winners.stream().map(GamePlayer::getUsername).toList(),
+                    pot,
+                    showdownCards
+            );
+            gameNotificationPort.notifyEndRound(game.getGameCode(), endRoundMessage);
+
+            // Kill the players that have no chips left
+            for (GamePlayer participant : game.getParticipants()) {
+                if (participant.getChips() <= 0 && !participant.isDead()) {
+                    participant.setDead(true);
+                }
+            }
+
+            // Check if only one player remains in the game -> We can end it here!
+            final int count = game.aliveCount();
+            if (count == 1) {
+                // Last player won, handle and then delete the game.
+                win(game, game.getCurrent());
+            } else if (count == 0) { // No players left, remove the game
+                manageGamePort.removeGame(game.getGameCode());
+            } else {
+                nextRound(game); // Start the next round
+            }
+        } else if (cards == 4) { // Uncover one more card
+            game.serveCards(1);
+            final List<String> allCards = List.of(temp[0], temp[1], temp[2], temp[3], temp[4]);
+            final List<String> newCards = List.of(temp[4]);
+            final NewCardsMessage message = new NewCardsMessage(
+                    allCards,
+                    newCards
+            );
+            gameNotificationPort.notifyNewCards(game.getGameCode(), message);
+            nextRound(game); // Start the first round of the game
+            nextTurn(game); // Notify the game service that the first turn started
+        } else if (cards == 3) { // Uncover one more card
+            game.serveCards(1);
+            final List<String> allCards = List.of(temp[0], temp[1], temp[2], temp[3]);
+            final List<String> newCards = List.of(temp[3]);
+            final NewCardsMessage message = new NewCardsMessage(
+                    allCards,
+                    newCards
+            );
+            gameNotificationPort.notifyNewCards(game.getGameCode(), message);
+            nextRound(game); // Start the first round of the game
+            nextTurn(game); // Notify the game service that the first turn started
+        } else { // Uncover 3 cards
+            game.serveCards(3);
+            final List<String> allCards = List.of(temp[0], temp[1], temp[2]);
+            final List<String> newCards = List.of(temp[0], temp[1], temp[2]);
+            final NewCardsMessage message = new NewCardsMessage(
+                    allCards,
+                    newCards
+            );
+            gameNotificationPort.notifyNewCards(game.getGameCode(), message);
+            nextRound(game); // Start the first round of the game
+            nextTurn(game); // Notify the game service that the first turn started
+        }
     }
 
     // inherits the scheduler while game is running
     @Override
     public void rememberTurn(PokerGame game) {
         final GamePlayer current = game.getCurrent();
-
-        // TODO: Find available actions and send a message
+        final ActionsResponse actions = getGameUseCase.availableActions(game, current.getUsername());
+        final List<Action> available = actions.actions();
+        final TurnMessage turnMessage = new TurnMessage(
+                current.getUsername(),
+                available,
+                game.getCurrentBet(),
+                countdown,
+                game.getOptions().getTurnTime()
+        );
+        gameNotificationPort.notifyTurn(game.getGameCode(), turnMessage);
     }
 
     @Override
