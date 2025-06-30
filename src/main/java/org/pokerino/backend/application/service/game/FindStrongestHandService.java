@@ -31,7 +31,7 @@ public class FindStrongestHandService implements FindStrongestHandUseCase {
             }
 
             // Ensure the hand is valid and contains two cards
-            final String[] hand = player.getHand();
+            final String[] hand = game.mergeHands(player.getHand());
             if (hand[0] == null || hand[1] == null) {
                 continue; // Skip players without a valid hand
             }
