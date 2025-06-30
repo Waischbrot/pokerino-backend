@@ -9,7 +9,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MARIADB_NAME}
-      - MYSQL_USER=${MARIADB_USER}
+      - MYSQL_USER=${MARIADB_USERNAME}
       - MYSQL_PASSWORD=${MARIADB_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
