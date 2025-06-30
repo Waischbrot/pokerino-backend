@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.TurnMessage;
+import org.pokerino.backend.application.port.in.JWTUseCase;
 import org.pokerino.backend.application.port.in.game.TurnUseCase;
 import org.pokerino.backend.application.port.out.LoadGamePort;
 import org.pokerino.backend.domain.game.GamePlayer;
@@ -12,7 +13,6 @@ import org.pokerino.backend.domain.game.GameState;
 import org.pokerino.backend.domain.game.PokerGame;
 import org.pokerino.backend.domain.outbound.exception.BadRequestException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -21,10 +21,11 @@ import org.springframework.stereotype.Controller;
 public class GameSocketController {
     TurnUseCase turnUseCase;
     LoadGamePort loadGamePort;
+    JWTUseCase jwtUseCase;
 
     @MessageMapping("/game/turn")
     public void handleTurn(final TurnMessage message) {
-        final String username = getUsername();
+        final String username = getUsername(message.token());
         final PokerGame game = loadGamePort.getUserGame(username)
                 .orElseThrow(() -> new BadRequestException("No game found for user: " + username));
         if (game.getState() != GameState.IN_ROUND) {
@@ -42,7 +43,11 @@ public class GameSocketController {
     }
 
     @NonNull
-    private String getUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+    private String getUsername(String token) {
+        try {
+            return jwtUseCase.extractUsername(token);
+        } catch (Exception exception) {
+            throw new BadRequestException("Invalid or missing JWT token");
+        }
     }
 }

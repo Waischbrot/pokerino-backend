@@ -38,7 +38,7 @@ public class UserController {
     // Password -> Ändern in dem man das neue hasht und setzt
     @PostMapping("/change-password")
     public ResponseEntity<Boolean> changePassword(@RequestParam String newPassword) {
-        userUseCase.changePassword(newPassword);
-        return ResponseEntity.ok(true);
+        var result = userUseCase.changePassword(newPassword);
+        return ResponseEntity.ok(result);
     }
 }

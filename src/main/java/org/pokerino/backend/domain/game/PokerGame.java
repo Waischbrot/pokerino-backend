@@ -3,6 +3,7 @@ package org.pokerino.backend.domain.game;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.domain.outbound.exception.BadRequestException;
 import org.pokerino.backend.domain.user.User;
@@ -15,7 +16,7 @@ import java.util.List;
 public final class PokerGame {
     final String gameCode;
     final TableOptions options;
-    GameState state;
+    @Setter GameState state;
     long totalChips; // All chips involved -> Used to pay out winnings at the end of the game
     final List<GamePlayer> participants; // All participants including those that lost
     int dealer; // Keeps the index of where the dealer is located
@@ -148,6 +149,7 @@ public final class PokerGame {
     }
 
     public void resetParticipants() {
+        this.current = this.dealer; // Reset the current player to the dealer and one further
         for (GamePlayer participant : this.participants) {
             participant.setBet(0);
             participant.setFolded(false);

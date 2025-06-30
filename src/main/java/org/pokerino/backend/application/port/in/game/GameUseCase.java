@@ -9,4 +9,7 @@ public interface GameUseCase {
     void endBettingRound(PokerGame game);
     void rememberTurn(PokerGame game);
     void startScheduler(PokerGame game);
+    void tryStart(PokerGame game);
+    void startGame(PokerGame game);
+    void nextRound(PokerGame game);
 }
