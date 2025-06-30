@@ -391,6 +391,22 @@ stompClient.activate();
 ---
 
 ## Websocket Inbound Messages
+To perform a turn action in a poker game, send a message to the following STOMP destination:
+
+> **Destination:**  
+> `/app/game/turn`
+
+>**Message Body:**
+> ```json
+> {
+>   "token": "your-jwt-token",
+>   "action": "FOLD",
+>   "chips": 0
+> }
+> ```
+> - `action` must be one of: `"FOLD"`, `"CHECK"`, `"CALL"`, `"RAISE"`, `"ALL_IN"`.  
+    >   Only send actions that are currently available to you.
+> - `chips` is **only used** when the action is `"RAISE"`; otherwise, it should be `0`.
 
 ---
 
