@@ -1,24 +1,52 @@
 # Pokerino Backend
 
-A Spring Boot project that provides a REST API and Websocket service for a Poker game.
+A modern Spring Boot backend for an online Poker platform, built with Java 21.
+This project uses Websockets for real-time gameplay and exposes REST endpoints everything else like auth.
 
 [![Java](https://img.shields.io/badge/Java-21-red.svg?logo=java)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.2-brightgreen.svg?logo=spring)](https://spring.io/projects/spring-boot)
 [![Gradle](https://img.shields.io/badge/Gradle-8.11.1-green.svg?logo=gradle)](https://gradle.org/)
-[![JUnit](https://img.shields.io/badge/JUnit-5.11.4-blue.svg?logo=junit)](https://junit.org/junit5/)
 
-## External API Endpoints
+---
 
-Due to the different purposes which this backend serves, 2 different communication protocols are used: REST and Websockets.
-e.g. REST for user authentication or character information and Websockets for the gameplay itself.
+## Used Technologies
 
-### Authentication (REST)
+- Java 21 + Spring Boot
+- Gradle
+- MariaDB
+- Docker
+- Websockets + Rest
+- JWT for authentication
 
-#### **POST** `/auth/signup`
+---
 
+## Configuration
+
+The backend is configured via environment variables. The following variables are required:
+
+| Variable Name         | Description                        | Example Value      | Required |
+|-----------------------|------------------------------------|--------------------|----------|
+| `SERVER_PORT`         | Port for the backend server        | `8080`             | Yes      |
+| `MARIADB_HOST`        | MariaDB database host              | `localhost`        | Yes      |
+| `MARIADB_PORT`        | MariaDB database port              | `3306`             | Yes      |
+| `MARIADB_NAME`        | MariaDB database name              | `pokerino`         | Yes      |
+| `MARIADB_USERNAME`    | MariaDB username                   | `pokeruser`        | Yes      |
+| `MARIADB_PASSWORD`    | MariaDB password                   | `supersecret`      | Yes      |
+| `JWT_SECRET_KEY`      | Secret key for JWT (HS256)         | `myjwtsecretkey`   | Yes      |
+| `JWT_EXPIRATION_TIME` | JWT expiration time in ms          | `3600000`          | Yes      |
+
+**Note:**
+- All variables are required for the application to start successfully.
+- `JWT_SECRET_KEY` should be generated cryptographically secure.
+- `JWT_EXPIRATION_TIME` is in milliseconds (e.g., `3600000` for 1 hour).
+
+---
+
+## Rest Authentication
+
+### **POST** `/auth/signup`
 Register a new account to the backend
-
-> Input (data to create a new account)
+> Body
 > ```json
 > {
 >   "username": "username",
@@ -27,17 +55,13 @@ Register a new account to the backend
 > }
 > ```
 
-> Return: 
-> - OK (new account data if successful)
-> - Bad Request (there has been a problem)
+> Return:
+> - OK
+> - Internal Server Error
 
----
-
-#### **POST** `/auth/login`
-
+### **POST** `/auth/login`
 Login to an existing account using email
-
-> Input (data to login)
+> Body
 > ```json
 > {
 >   "email": "email",
@@ -45,153 +69,55 @@ Login to an existing account using email
 > }
 > ```
 
-> Return (JWT token in JSON if successful):
+> Return:
 > ```json
 > {
 >   "token": "token",
->   "username": "username"
+>   "user": {
+>     "username": "username",
+>     "joinDate": "date",
+>     "chips": 0,
+>     "experience": {
+>       "level": 0,
+>       "currentExperience": 0,
+>       "requiredExperience": 0
+>     }
+>   }
 > }
 > ```
 
----
-
-#### **POST** `/auth/verify`
-
-Verify the account using the code sent to the email
-
-> Input (verification code)
-> - RequestParam "verificationCode"
-
-> Return:
-> - OK (account verified)
-> - Bad Request (user could not be verified)
+### GET 
 
 ---
 
-#### **POST** `/auth/resend`
-
-Resend the verification code to the email
-
-> Input (email as RequestParam)
-> - RequestParam "email"
-
-> Return:
-> - OK (verification code sent)
-> - Bad Request (something went wrong)
+## Rest User Management
 
 ---
 
-#### **GET** `/auth/username`
-
-Check if a given username is already taken.
-
-> Input (username as RequestParam):
-> - RequestParam "username"
-
-> Return:
-> - `true` if the username is taken
-> - `false` if the username is available
+## Rest Table/Session Management
 
 ---
 
-#### **GET** `/auth/token`
+## Rest Game Information
 
-Validate the provided JWT token.
+---
 
-> Input (token as RequestParam):
-> - RequestParam "token"
+## Websocket Connect to App
 
-> Return:
-> - `true` if the token is valid
-> - `false` if the token is invalid
+---
 
-## Internal API (use case)
+## Websocket Outbound Notifications
 
-Internal services and adapters can interact with each other using UseCases.
-A UseCase is an interface that contains methods specific to the service implementation.
+---
 
-Because of the way Spring works, these internal dependencies are injected automatically if only one constructor exists
-or if the constructor is annotated with `@Autowired`. [Spring Docs](https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html)
+## Websocket Inbound Messages
 
-### Ranking the value of a given hand
+---
 
-```Java
-private final DeckRankingUseCase deckRankingUseCase;
+## Final Words
 
-public void test() {
-    String[] hand = { "2H", "3D", "5S", "9C", "KD", "2C", "3H" };
-    DeckRanking ranking = deckRankingUseCase.evaluateHand(hand);
-    // Do stuff with ranking
-}
-```
+This project was a group effort for a course in our studies called "Web Engineering".
+Although we chose a challenging topic and lost one teammate along the way due to exmatriculation,
+we truly enjoyed working on it together.
 
-[Interface](src/main/java/org/pokerino/backend/application/port/in/DeckRankingUseCase.java) | 
-[Service Implementation](src/main/java/org/pokerino/backend/application/service/DeckRankingService.java)
-
-### Finding the players with the strongest hands
-
-```Java
-private final FindStrongestHandUseCase findStrongestHandUseCase;
-
-public void test(PokerGame game) {
-    // Call to find the players with the strongest hands this round
-    List<GamePlayer> winningPlayers = findStrongestHandUseCase.findStrongestHands(game);
-}
-```
-
-[Interface](src/main/java/org/pokerino/backend/application/port/in/FindStrongestHandUseCase.java) |
-[Service Implementation](src/main/java/org/pokerino/backend/application/service/FindStrongestHandService.java)
-
-## Domain Model
-
-### Card Stacks
-
-Imagine a CardStack instance just like a stack of cards placed on the table, where you can take cards from.
-
-> Creating a new instance:
-> ```Java
-> CardStack deck = CardStack.create();
->```
-
-> Taking a card from the stack:
-> ```Java
-> String card = deck.take();
-> ```
-> Throws an IllegalStateException if the stack is empty.
-
-[Implementation](src/main/java/org/pokerino/backend/domain/cards/CardStack.java)
-
-### Game Instances
-
-For every running game, there has to be one game instance in the backend.
-This instance does not implement the game logic, but it holds the necessary data to do so.
-
-> Creating a new instance:
-> ```Java
-> // Initialise table information here and parse to constructor
-> PokerGame game = new PokerGame(table);
-> ```
-
-PokerGame implements the [Joinable](src/main/java/org/pokerino/backend/domain/game/Joinable.java) interface, which adds basic user management.
-
-> How to use:
-> ```Java
-> // Add a user to the game
-> game.addPlayer(long userId);
-> // Remove a user from the game
-> game.removePlayer(long userId);
-> // Check if a user is in the game
-> game.contains(long userId);
-> // Get the number of players in the game
-> game.currentPlayers();
-> // Get max amount of players
-> game.maxPlayers();
-> ```
-
-[Implementation](src/main/java/org/pokerino/backend/domain/game/PokerGame.java)
-
-Every user within a game is stored as [GamePlayer](src/main/java/org/pokerino/backend/domain/game/GamePlayer.java), which holds the following attributes for the game:
-
-- `int total` - The total amount of chips
-- `int bet` - The current bet
-- `String[] hand` - The user's hand
+Thank you for checking out our project! ❤️
