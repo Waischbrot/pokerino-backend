@@ -349,11 +349,40 @@ Get the list of available actions for the current player (if it's their turn).
 
 ---
 
-## Rest Game Information
+## Websocket Connect to App
+
+### **WebSocket Endpoint:** `/connect`
+
+To connect to the application's WebSocket, use the following endpoint:
+
+- **URL:**  
+  `ws://<base-url>/connect`  
+  or (if using SockJS fallback):  
+  `http://<base-url>/connect`
+
+SockJS is also supported!
 
 ---
 
-## Websocket Connect to App
+**Example using JavaScript and [SockJS](https://github.com/sockjs/sockjs-client) with [STOMP.js](https://github.com/stomp-js/stompjs):**
+
+```js
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+
+const socket = new SockJS('http://<base-url>/connect');
+const stompClient = new Client({
+  webSocketFactory: () => socket,
+  debug: (str) => console.log(str),
+});
+
+stompClient.onConnect = (frame) => {
+  console.log('Connected: ' + frame);
+  // Subscribe or send messages here
+};
+
+stompClient.activate();
+```
 
 ---
 
@@ -369,6 +398,6 @@ Get the list of available actions for the current player (if it's their turn).
 
 This project was a group effort for a course in our studies called "Web Engineering".
 Although we chose a challenging topic and lost one teammate along the way due to exmatriculation,
-we truly enjoyed working on it together.
+we truly enjoyed working on it together, writing thousands of lines in the progress.
 
 Thank you for checking out our project! ❤️
