@@ -7,8 +7,6 @@ This project uses Websockets for real-time gameplay and exposes REST endpoints e
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.2-brightgreen.svg?logo=spring)](https://spring.io/projects/spring-boot)
 [![Gradle](https://img.shields.io/badge/Gradle-8.11.1-green.svg?logo=gradle)](https://gradle.org/)
 
----
-
 ## Used Technologies
 
 - Java 21 + Spring Boot
@@ -17,8 +15,6 @@ This project uses Websockets for real-time gameplay and exposes REST endpoints e
 - Docker
 - Websockets + Rest
 - JWT for authentication
-
----
 
 ## Configuration
 
@@ -40,13 +36,11 @@ The backend is configured via environment variables. The following variables are
 - `JWT_SECRET_KEY` should be generated cryptographically secure.
 - `JWT_EXPIRATION_TIME` is in milliseconds (e.g., `3600000` for 1 hour).
 
----
-
 ## Rest Authentication
 
 ### **POST** `/auth/signup`
 Register a new account to the backend
-> Body
+> Body:
 > ```json
 > {
 >   "username": "username",
@@ -59,9 +53,11 @@ Register a new account to the backend
 > - OK
 > - Internal Server Error
 
+---
+
 ### **POST** `/auth/login`
 Login to an existing account using email
-> Body
+> Body:
 > ```json
 > {
 >   "email": "email",
@@ -86,11 +82,27 @@ Login to an existing account using email
 > }
 > ```
 
-### GET 
+---
+
+### **GET** `/auth/username`
+Get if this username is already taken
+> Query Parameter: `username`
+
+> Return: `true`
+
+---
+
+### **GET** `/auth/token`
+Check if the provided JWT token is valid
+> Query Parameter: `token`
+
+> Return: `true`
 
 ---
 
 ## Rest User Management
+
+
 
 ---
 
