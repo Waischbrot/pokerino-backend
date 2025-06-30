@@ -40,7 +40,7 @@ The backend is configured via environment variables. The following variables are
 
 ### **POST** `/auth/signup`
 Register a new account to the backend
-> Body:
+> **Body:**
 > ```json
 > {
 >   "username": "username",
@@ -49,13 +49,13 @@ Register a new account to the backend
 > }
 > ```
 
-> Return: `true`
+> **Return:** `true`
 
 ---
 
 ### **POST** `/auth/login`
 Login to an existing account using email
-> Body:
+> **Body:**
 > ```json
 > {
 >   "email": "email",
@@ -63,7 +63,7 @@ Login to an existing account using email
 > }
 > ```
 
-> Return:
+> **Return:**
 > ```json
 > {
 >   "token": "token",
@@ -84,17 +84,17 @@ Login to an existing account using email
 
 ### **GET** `/auth/username`
 Get if this username is already taken
-> Query Parameter: `username`
+> **Query Parameter:** `username`
 
-> Return: `true`
+> **Return:** `true`
 
 ---
 
 ### **GET** `/auth/token`
 Check if the provided JWT token is valid
-> Query Parameter: `token`
+> **Query Parameter:** `token`
 
-> Return: `true`
+> **Return:** `true`
 
 ---
 
@@ -128,7 +128,7 @@ Get a user's profile by username.
 > **Headers:**  
 > `Authorization: Bearer <token>`
 
-> Query Parameter: `username`
+> **Query Parameter:** `username`
 
 > **Return:**
 > ```json
@@ -153,9 +153,9 @@ Returns a new JWT token for the updated username.
 > **Headers:**  
 > `Authorization: Bearer <token>`
 
-> Query Parameter: `newUsername`
+> **Query Parameter:** `newUsername`
 
-> Return: `new-jwt-token`
+> **Return:** `new-jwt-token`
 
 ---
 
@@ -165,13 +165,160 @@ Change the currently authenticated user's password.
 > **Headers:**  
 > `Authorization: Bearer <token>`
 
-> Query Parameter: `newPassword`
+> **Query Parameter:** `newPassword`
 
-> Return: `true`
+> **Return:** `true`
 
 ---
 
 ## Rest Table/Session Management
+
+### **POST** `/table/host`
+Host a new table/session.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Body:**
+> ```json
+> {
+>   "name": "My Poker Table",
+>   "maxPlayers": 6,
+>   "turnTime": 30,
+>   "startBalance": 10000,
+>   "smallBlind": 50,
+>   "increasingBlind": true
+> }
+> ```
+
+> **Return:**
+> ```json
+> {
+>   "gameCode": "123456",
+>   "gameState": "WAITING_FOR_PLAYERS",
+>   "tableOptions": {
+>     "name": "High Rollers Table",
+>     "maxPlayers": 6,
+>     "turnTime": 30,
+>     "startBalance": 10000,
+>     "smallBlind": 50,
+>     "increasingBlind": true
+>   },
+>   "player": {
+>     "username": "alice",
+>     "host": false,
+>     "cards": null,
+>     "chips": 10000,
+>     "bet": 0,
+>     "folded": false,
+>     "dead": false
+>   },
+>   "opponents": [
+>     {
+>       "username": "bob",
+>       "host": true,
+>       "chips": 10000,
+>       "bet": 0,
+>       "folded": false,
+>       "dead": false
+>     }
+>   ],
+>   "cardsOnTable": [null, null, null, null, null],
+>   "currentPlayer": null,
+>   "actions": null
+> }
+> ```
+
+---
+
+### **POST** `/table/join`
+Join an existing table/session by code.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Query Parameter:** `code`
+
+> **Return:**
+> ```json
+> {
+>   "gameCode": "123456",
+>   "gameState": "WAITING_FOR_PLAYERS",
+>   "tableOptions": {
+>     "name": "High Rollers Table",
+>     "maxPlayers": 6,
+>     "turnTime": 30,
+>     "startBalance": 10000,
+>     "smallBlind": 50,
+>     "increasingBlind": true
+>   },
+>   "player": {
+>     "username": "alice",
+>     "host": false,
+>     "cards": null,
+>     "chips": 10000,
+>     "bet": 0,
+>     "folded": false,
+>     "dead": false
+>   },
+>   "opponents": [
+>     {
+>       "username": "bob",
+>       "host": true,
+>       "chips": 10000,
+>       "bet": 0,
+>       "folded": false,
+>       "dead": false
+>     }
+>   ],
+>   "cardsOnTable": [null, null, null, null, null],
+>   "currentPlayer": null,
+>   "actions": null
+> }
+> ```
+
+---
+
+### **POST** `/table/leave`
+Leave the current table/session.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Return:**  
+> *(No content, returns error if not in a table)*
+
+---
+
+### **GET** `/table/current`
+Get the current table/session the user is in.
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Return:**
+> ```json
+> {
+>   // GameResponse object
+> }
+> ```
+> *(Returns a GameResponse if the user is currently playing, including available actions if it's the player's turn)*
+
+---
+
+### **GET** `/table/current/actions`
+Get the list of available actions for the current player (if it's their turn).
+
+> **Headers:**  
+> `Authorization: Bearer <token>`
+
+> **Return:**
+> ```json
+> {
+>   // ActionsResponse object
+> }
+> ```
+> *(Returns a list of available actions for the current player if it's their turn)*
 
 ---
 
