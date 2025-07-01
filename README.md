@@ -1,7 +1,7 @@
 # Pokerino Backend
 
 A modern Spring Boot backend for an online Poker platform, built with Java 21.
-This project uses Websockets for real-time gameplay and exposes REST endpoints everything else like auth.
+This project uses Websockets for real-time gameplay and exposes REST endpoints for everything else like auth.
 
 [![Java](https://img.shields.io/badge/Java-21-red.svg?logo=java)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.2-brightgreen.svg?logo=spring)](https://spring.io/projects/spring-boot)
