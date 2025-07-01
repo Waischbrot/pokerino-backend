@@ -375,7 +375,7 @@ Get the list of available actions for the current player (if it's their turn).
 ### **GET** `/table/current/cards`
 Get your own current hand cards.
 
-> **Headers:**
+> **Headers:**  
 > `Authorization: Bearer <token>`
 
 > **Return:**
