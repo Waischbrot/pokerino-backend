@@ -53,8 +53,7 @@ public final class UserService implements UserUseCase {
             .orElseThrow(() -> new InternalServerErrorException("User not found"));
         user.setUsername(newUsername);
         saveUserPort.saveUser(user);
-        final String jwtToken = this.jwtUseCase.generateToken(user);
-        return jwtToken;
+        return this.jwtUseCase.generateToken(user);
     }
 
     @Override
@@ -62,8 +61,8 @@ public final class UserService implements UserUseCase {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = loadUserPort.findByUsername(username)
             .orElseThrow(() -> new InternalServerErrorException("User not found"));
-        final String endcodedPassword = this.passwordEncoder.encode(newPassword);
-        user.setPassword(endcodedPassword);
+        final String encodedPassword = this.passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
         saveUserPort.saveUser(user);
         return true;
     }
