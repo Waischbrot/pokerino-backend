@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
+import org.pokerino.backend.adapter.in.response.game.CardsResponse;
 import org.pokerino.backend.adapter.in.response.game.GameResponse;
 import org.pokerino.backend.adapter.out.websocket.message.log.PlayerJoinMessage;
 import org.pokerino.backend.adapter.out.websocket.message.log.PlayerLeaveMessage;
@@ -23,6 +24,8 @@ import org.pokerino.backend.domain.user.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -195,6 +198,23 @@ public final class TableService implements TableUseCase {
         final PokerGame pokerGame = loadGamePort.getUserGame(username)
                 .orElseThrow(() -> new BadRequestException("No game found for user: " + username));
         return getGameUseCase.availableActions(pokerGame, username);
+    }
+
+    @Override
+    public CardsResponse currentCards() {
+        final String username = getUsername();
+        final PokerGame pokerGame = loadGamePort.getUserGame(username)
+                .orElseThrow(() -> new BadRequestException("No game found for user: " + username));
+        if (pokerGame.getState() != GameState.IN_ROUND) {
+            throw new BadRequestException("Game: '" + pokerGame.getGameCode() + "' is not in a round!");
+        }
+        final GamePlayer player = pokerGame.getPlayer(username);
+        if (player.isDead()) {
+            throw new BadRequestException("You are dead and cannot see your cards!");
+        }
+        final String[] hand = player.getHand();
+        final List<String> cards = Arrays.asList(hand);
+        return new CardsResponse(cards);
     }
 
     @NonNull

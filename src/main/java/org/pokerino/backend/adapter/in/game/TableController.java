@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.pokerino.backend.adapter.in.dto.game.HostGameDto;
 import org.pokerino.backend.adapter.in.response.game.ActionsResponse;
+import org.pokerino.backend.adapter.in.response.game.CardsResponse;
 import org.pokerino.backend.adapter.in.response.game.GameResponse;
 import org.pokerino.backend.application.port.in.game.TableUseCase;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,13 @@ public final class TableController {
     @GetMapping("current/actions")
     public ResponseEntity<ActionsResponse> currentActions() {
         var result = tableUseCase.currentActions();
+        return ResponseEntity.ok(result);
+    }
+
+    // Get the current cards of oneself
+    @GetMapping("current/cards")
+    public ResponseEntity<CardsResponse> currentCards() {
+        var result = tableUseCase.currentCards();
         return ResponseEntity.ok(result);
     }
 }

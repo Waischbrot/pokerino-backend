@@ -26,6 +26,7 @@ This project uses Websockets for real-time gameplay and exposes REST endpoints e
     - [POST /table/leave](#post-tableleave)
     - [GET /table/current](#get-tablecurrent)
     - [GET /table/current/actions](#get-tablecurrentactions)
+    - [GET /table/current/cards](#get-tablecurrentcards)
 - [Websocket Connect to App](#websocket-connect-to-app)
 - [Websocket Outbound Notifications](#websocket-outbound-notifications)
 - [Websocket Inbound Messages](#websocket-inbound-messages)
@@ -366,6 +367,21 @@ Get the list of available actions for the current player (if it's their turn).
 > ```json
 > {
 >   "actions": ["FOLD", "CALL", "RAISE"]
+> }
+> ```
+
+---
+
+### **GET** `/table/current/cards`
+Get your own current hand cards.
+
+> **Headers:**
+> `Authorization: Bearer <token>`
+
+> **Return:**
+> ```json
+> {
+>  "cards": ["As", "Kh"]
 > }
 > ```
 
